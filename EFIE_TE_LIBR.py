@@ -58,6 +58,8 @@ from numpy import sin ,cos, pi
 from scipy import integrate
 from scipy.special import hankel2
     
+# THIS IS A TEST
+
 ##-----------Functions used for the Electric field-------------------------
 def DiscritizeEin(coordinates,wavelength,angle):
     # Create an array for the number of segments

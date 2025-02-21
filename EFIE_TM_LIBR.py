@@ -94,6 +94,23 @@ def Coordinates_to_segment(coordinates,set):
         raise ValueError("The requested segment is not found in the boundary points")
     return coordinates[index]
 
+def Coordinates_to_pulsebaseNodes(coordinates, set):
+    # Create a list of nodes used to create the basis and test functions
+    if coordinates[0] == coordinates[-1]:
+        # Start and end of boundary_points are the same --> closed surface
+        index = np.array([set-1, set, set+1])
+    else:
+        # Start and end of boundary_points are NOT the same --> open surface
+        if set == 0:
+            # the very first node, so don't include the previous node
+            index = np.array([set, set+1])
+        elif set == len(coordinates) - 1:
+            # the very last node, so don't include the next node
+            index = np.array([set-1, set])
+        else:
+            index = np.array([set-1, set, set+1])
+    return coordinates[index]
+
 def Pulsebase(tau,segment):
     # Used for the test and basis function, creates a linear connection between the edges of the segment
     xvec=segment[:,0]

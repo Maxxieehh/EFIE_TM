@@ -85,15 +85,28 @@ def DiscritizeEin(coordinates,wavelength,angle):
     return Ein
 
 def Coordinates_to_segment(coordinates,set):
-    # Take 2 positions in coordinates and return these to define the segment
-    if set <len(coordinates)-1:
-        # Link the index set of coordinates to the next index
-        index = np.array([set,set+1])
-    else:
-        # If the value of set is invalid, raise an error
-        raise ValueError("The requested segment is not found in the boundary points")
+    # Take 2 positions around the set, as well as the set position itself
+    # in coordinates and return these to define the segment and its pulsebase
+    # Take note of the difference between open and closed contours!
+    if coordinates[-1] == coordinates[0]: # Closed surface
+        if set < len(coordinates)-1:
+            # Link the index set of coordinates to the next index
+            index = np.array([set-1,set,set+1])
+        else:
+            # If the value of set is invalid, raise an error
+            raise ValueError("The requested segment is not found in the boundary points")
+            
+    else: # Open surface (NO DIFFERENCE ATM)
+        if set < len(coordinates)-1:
+            # Link the index set of coordinates to the next index
+            index = np.array([set,set+1])
+        else:
+            # If the value of set is invalid, raise an error
+            raise ValueError("The requested segment is not found in the boundary points")
+            
     return coordinates[index]
 
+"""should be changed to the correct pulsebase"""
 def Pulsebase(tau,segment):
     # Used for the test and basis function, creates a linear connection between the edges of the segment
     xvec=segment[:,0]

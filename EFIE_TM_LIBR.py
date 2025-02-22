@@ -112,8 +112,11 @@ def Coordinates_to_Nodes(coordinates, set):
             index = np.array([set-1, set, set+1]) 
     else:
         # Start and end of boundary_points are NOT the same --> open surface
-        """TODO"""
-        
+        if (set > 0) and (set < len(coordinates) - 1):
+            # We neglect the 1st and last node, as these do not have two neighbours
+            index = np.array([set-1, set, set+1])
+        else:
+            raise ValueError("The requested node does not have a left/right neighbor")
     return coordinates[index]
 
 def Pulsebase(tau,segment):
@@ -127,49 +130,6 @@ def Pulsebase(tau,segment):
     # Return the values (x,y) based on tau
     return [Xtau,Ytau]
 
-def Rooftopbase(tau, segment, coordinates, m):
-    xvec = segment[:, 0]
-    yvec = segment[:, 1]
-    x1, x2, y1, y2 = xvec[0], xvec[1], yvec[0], yvec[1]
-    Xtau = tau * x2 + (1 - tau) * x1
-    Ytau = tau * y2 + (1 - tau) * y1
-    
-    # Calculate the values for the adjacent segment (m-1) if it exists
-    if m > 0:
-        segment_prev = Coordinates_to_segment(coordinates, m-1)
-        xvec_prev = segment_prev[:, 0]
-        yvec_prev = segment_prev[:, 1]
-        x0, _, y0, _ = xvec_prev[0], xvec_prev[1], yvec_prev[0], yvec_prev[1]
-        Xtau_prev = tau * x1 + (1 - tau) * x0
-        Ytau_prev = tau * y1 + (1 - tau) * y0
-    else:
-        Xtau_prev, Ytau_prev = 0, 0 # or some appropriate default value
-
-    # Calculate the values for the adjacent segment (m+1) if it exists
-    if m < len(coordinates) - 2:
-        segment_next = Coordinates_to_segment(coordinates, m+1)
-        xvec_next = segment_next[:, 0]
-        yvec_next = segment_next[:, 1]
-        _, x3, _, y3 = xvec_next[0], xvec_next[1], yvec_next[0], yvec_next[1]
-        Xtau_next = tau * x3 + (1 - tau) * x2
-        Ytau_next = tau * y3 + (1 - tau) * y2
-    else:
-        Xtau_next, Ytau_next = 0, 0 # or some appropriate default value
-
-    # Construct the rooftop function
-    if 0 <= tau <= 1:
-        if m > 0:
-            val = (1 - tau) * np.array([Xtau_prev, Ytau_prev]) + tau * np.array([Xtau, Ytau])
-        else:
-            val = tau * np.array([Xtau, Ytau])
-        if m < len(coordinates) - 2:
-            val += (1 - tau) * np.array([Xtau, Ytau]) + tau * np.array([Xtau_next, Ytau_next])
-        else:
-            val += (1 - tau) * np.array([Xtau, Ytau])
-        return val / 2 # Normalize the rooftop function
-    else:
-        return np.array([0, 0])
-    
     
 def Efield_in(r,wavelength,angle):
     # Calculate the electric field value based on:

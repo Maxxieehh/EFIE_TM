@@ -40,11 +40,17 @@
 #
 #   Documentation: See documentation in the files provided.
 #
-#   Author name(s):     Justin Geerarts
-#                       Rowin Ansems
-#                       Tudor Popa
+#   Original Author name(s):    Justin Geerarts
+#                               Rowin Ansems
+#                               Tudor Popa
 #
-#   Date: 29-03-2021
+#   Adapor Author name(s):      Dorien Duyndam
+#                               Daniel Joaquim Ho
+#                               Charalambos Kypridemou
+#                               Max van Wijk
+#
+#   Original Date:      29-03-2021
+#   Adaptation Date:    21-02-2025
 #
 # The above authors declare that the following code is free of plagiarism.
 #
@@ -73,8 +79,8 @@ def DiscritizeEin(coordinates,wavelength,angle):
         # The loop goes over segments between 2 coordinates inside the array
         # Integrate.quad cannot deal with complex numbers (holds as of 22/03/2021)
         segment = Coordinates_to_segment(coordinates,m)
-        EReal = lambda tau: np.real(Efield_in(Pulsebase(tau,segment),wavelength,angle))
-        EImag = lambda tau: np.imag(Efield_in(Pulsebase(tau,segment),wavelength,angle))
+        EReal = lambda tau: np.real(Efield_in(Pulsebase(tau, segment),wavelength,angle))
+        EImag = lambda tau: np.imag(Efield_in(Pulsebase(tau, segment),wavelength,angle))
         IntReal = integrate.quad(EReal,0,1)[0]
         IntImag = integrate.quad(EImag,0,1)[0]
         # Correct for the test function used, see documentation
@@ -94,21 +100,20 @@ def Coordinates_to_segment(coordinates,set):
         raise ValueError("The requested segment is not found in the boundary points")
     return coordinates[index]
 
-def Coordinates_to_pulsebaseNodes(coordinates, set):
+def Coordinates_to_Nodes(coordinates, set):
     # Create a list of nodes used to create the basis and test functions
-    if coordinates[0] == coordinates[-1]:
+    if np.array_equal(coordinates[0], coordinates[-1]):
         # Start and end of boundary_points are the same --> closed surface
-        index = np.array([set-1, set, set+1])
+        if set == len(coordinates) - 1:
+            index = np.array([set-1, set, 0])
+        elif set == 0:
+            index = np.array([-1, set, set+1])
+        else:
+            index = np.array([set-1, set, set+1]) 
     else:
         # Start and end of boundary_points are NOT the same --> open surface
-        if set == 0:
-            # the very first node, so don't include the previous node
-            index = np.array([set, set+1])
-        elif set == len(coordinates) - 1:
-            # the very last node, so don't include the next node
-            index = np.array([set-1, set])
-        else:
-            index = np.array([set-1, set, set+1])
+        """TODO"""
+        
     return coordinates[index]
 
 def Pulsebase(tau,segment):
@@ -122,6 +127,50 @@ def Pulsebase(tau,segment):
     # Return the values (x,y) based on tau
     return [Xtau,Ytau]
 
+def Rooftopbase(tau, segment, coordinates, m):
+    xvec = segment[:, 0]
+    yvec = segment[:, 1]
+    x1, x2, y1, y2 = xvec[0], xvec[1], yvec[0], yvec[1]
+    Xtau = tau * x2 + (1 - tau) * x1
+    Ytau = tau * y2 + (1 - tau) * y1
+    
+    # Calculate the values for the adjacent segment (m-1) if it exists
+    if m > 0:
+        segment_prev = Coordinates_to_segment(coordinates, m-1)
+        xvec_prev = segment_prev[:, 0]
+        yvec_prev = segment_prev[:, 1]
+        x0, _, y0, _ = xvec_prev[0], xvec_prev[1], yvec_prev[0], yvec_prev[1]
+        Xtau_prev = tau * x1 + (1 - tau) * x0
+        Ytau_prev = tau * y1 + (1 - tau) * y0
+    else:
+        Xtau_prev, Ytau_prev = 0, 0 # or some appropriate default value
+
+    # Calculate the values for the adjacent segment (m+1) if it exists
+    if m < len(coordinates) - 2:
+        segment_next = Coordinates_to_segment(coordinates, m+1)
+        xvec_next = segment_next[:, 0]
+        yvec_next = segment_next[:, 1]
+        _, x3, _, y3 = xvec_next[0], xvec_next[1], yvec_next[0], yvec_next[1]
+        Xtau_next = tau * x3 + (1 - tau) * x2
+        Ytau_next = tau * y3 + (1 - tau) * y2
+    else:
+        Xtau_next, Ytau_next = 0, 0 # or some appropriate default value
+
+    # Construct the rooftop function
+    if 0 <= tau <= 1:
+        if m > 0:
+            val = (1 - tau) * np.array([Xtau_prev, Ytau_prev]) + tau * np.array([Xtau, Ytau])
+        else:
+            val = tau * np.array([Xtau, Ytau])
+        if m < len(coordinates) - 2:
+            val += (1 - tau) * np.array([Xtau, Ytau]) + tau * np.array([Xtau_next, Ytau_next])
+        else:
+            val += (1 - tau) * np.array([Xtau, Ytau])
+        return val / 2 # Normalize the rooftop function
+    else:
+        return np.array([0, 0])
+    
+    
 def Efield_in(r,wavelength,angle):
     # Calculate the electric field value based on:
     # the x and y position (in r), wavelength and input angle

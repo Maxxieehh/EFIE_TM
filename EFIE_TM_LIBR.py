@@ -92,7 +92,7 @@ def DiscritizeEin(coordinates,wavelength,angle):
 
 def Coordinates_to_segment(coordinates,set):
     # Take 2 positions in coordinates and return these to define the segment
-    if set <len(coordinates)-1:
+    if set < len(coordinates)-1:
         # Link the index set of coordinates to the next index
         index = np.array([set,set+1])
     else:
@@ -105,9 +105,9 @@ def Coordinates_to_Nodes(coordinates, set):
     if np.array_equal(coordinates[0], coordinates[-1]):
         # Start and end of boundary_points are the same --> closed surface
         if set == len(coordinates) - 1:
-            index = np.array([set-1, set, 0])
+            index = np.array([set-1, set, 1])
         elif set == 0:
-            index = np.array([-1, set, set+1])
+            index = np.array([-2, set, set+1])
         else:
             index = np.array([set-1, set, set+1]) 
     else:
@@ -130,6 +130,22 @@ def Pulsebase(tau,segment):
     # Return the values (x,y) based on tau
     return [Xtau,Ytau]
 
+def Rooftop(tau, nodes):
+    xvec = nodes[:,0]
+    yvec = nodes[:,1]
+    xmminus1, xm, xmplus1, ymminus1, ym, ymplus1 = xvec[0], xvec[1], xvec[2], yvec[0], yvec[1], yvec[2]
+    
+    Xtau_minus = 0.5*((1 + tau)*xmminus1 + (1 - tau)*xm)
+    Xtau_plus = 0.5*((1 + tau)*xm + (1 - tau)*xmplus1)
+    
+    Ytau_minus = 0.5*((1 + tau)*ymminus1 + (1 - tau)*ym)
+    Ytau_plus = 0.5*((1 + tau)*ym + (1 - tau)*ymplus1)
+
+    # Xtau = 0.5*((1 + tau)*xmplus1 + (1 - tau)*xm)
+    
+    
+    
+    return [Xtau_minus, Xtau_plus, Ytau_minus, Ytau_plus]
     
 def Efield_in(r,wavelength,angle):
     # Calculate the electric field value based on:

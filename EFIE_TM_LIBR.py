@@ -197,6 +197,7 @@ def Efield_in(r, wavelength, angle):
     k0 = 2*pi/wavelength
     return E0*np.exp(1j*k0*(cos(angle)*x + sin(angle)*y))
 
+"""HAS YET TO BE LOOKED AT! DEFINITELY COMPLETELY WRONG!"""
 ##-----------Functions used for the Z matrix------------------------------
 def Zmatrix(coordinates,wavelength):
     # Calculate the Z matrix used for the Method of Moments solution

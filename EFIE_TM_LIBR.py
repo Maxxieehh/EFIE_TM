@@ -68,69 +68,69 @@ from scipy.special import hankel2
 
 #-----------Functions used for the Electric field-------------------------
 
-# def DiscritizeEin(coordinates,wavelength,angle):
-#     # Create an array for the number of segments
-#     # the code does not close the contour, do so manually
-#     M = len(coordinates)-1
-#     Ein = np.zeros(M,dtype=np.complex128)
-#     # values of Ein are complex so matrix needs to be able to handle complex values
-#     # Overwrite each datapoint with the actual value of the Ein field
-#     for m in np.arange(M):
-#         # Sample the E field for varying coordinates, based on the testing Function
-#         # The loop goes over segments between 2 coordinates inside the array
-#         # Integrate.quad cannot deal with complex numbers (holds as of 22/03/2021)
-#         segment = Coordinates_to_segment(coordinates,m)
-#         EReal = lambda tau: np.real(Efield_in(Pulsebase(tau, segment),wavelength,angle))
-#         EImag = lambda tau: np.imag(Efield_in(Pulsebase(tau, segment),wavelength,angle))
-#         IntReal = integrate.quad(EReal,0,1)[0]
-#         IntImag = integrate.quad(EImag,0,1)[0]
-#         # Correct for the test function used, see documentation
-#         # [0], since integrate.quad outputs result[0] and upper bound of error[1]
-#         dst = np.linalg.norm(np.subtract(segment[1],segment[0]))
-#         # multiplication with length of segment due to normalization
-#         Ein[m] =  dst*(IntReal+ 1j*IntImag)
-#     return Ein
-
-def DiscritizeEin(coordinates, wavelength, angle):
+def DiscritizeEin(coordinates,wavelength,angle):
     # Create an array for the number of segments
     # the code does not close the contour, do so manually
     M = len(coordinates)-1
-    Ein = np.zeros(M, dtype=np.complex128)
+    Ein = np.zeros(M,dtype=np.complex128)
     # values of Ein are complex so matrix needs to be able to handle complex values
     # Overwrite each datapoint with the actual value of the Ein field
-    # Differentiate between the closed and open surface scenarios:
-    if np.array_equal(coordinates[0], coordinates[-1]): # Closed
-        for m in np.arange(M):
-            # Sample the E field for varying coordinates, based on the testing Function
-            # The loop goes over segments between 2 coordinates inside the array
-            # Integrate.quad cannot deal with complex numbers (holds as of 22/03/2021)
-            segment = Coordinates_to_segment(coordinates, m)
-            EReal = lambda eta: np.real(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-            EImag = lambda eta: np.imag(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-            IntReal = integrate.quad(EReal, -1, 1)[0]
-            IntImag = integrate.quad(EImag, -1, 1)[0]
-            # Correct for the test function used, see documentation
-            # [0], since integrate.quad outputs result[0] and upper bound of error[1]
-            dst = np.linalg.norm(np.subtract(segment[1], segment[0]))
-            # multiplication with length of segment due to normalization
-            Ein[m] =  dst*(IntReal + 1j*IntImag)
-    else: # Open surface
-        for m in np.arange(M):
-            segment = Coordinates_to_segment(coordinates, m)
-            if m == 0: # There should be no "half" piecewise functions, so no falling rooftop at the start
-                EReal = lambda eta: np.real(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-                EImag = lambda eta: np.imag(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-            elif m == M: # There should be no "half" piecewise functions, so no rising rooftop at the end
-                EReal = lambda eta: np.real(Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-                EImag = lambda eta: np.imag(Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-            else:
-                EReal = lambda eta: np.real(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-                EImag = lambda eta: np.imag(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
-            IntReal = integrate.quad(EReal, -1, 1)[0]
-            IntImag = integrate.quad(EImag, -1, 1)[0]
-            dst = np.linalg.norm(np.subtract(segment[1], segment[0]))
-            Ein[m] =  dst*(IntReal + 1j*IntImag)
+    for m in np.arange(M):
+        # Sample the E field for varying coordinates, based on the testing Function
+        # The loop goes over segments between 2 coordinates inside the array
+        # Integrate.quad cannot deal with complex numbers (holds as of 22/03/2021)
+        segment = Coordinates_to_segment(coordinates,m)
+        EReal = lambda tau: np.real(Efield_in(Pulsebase(tau, segment),wavelength,angle))
+        EImag = lambda tau: np.imag(Efield_in(Pulsebase(tau, segment),wavelength,angle))
+        IntReal = integrate.quad(EReal,-1,1)[0]
+        IntImag = integrate.quad(EImag,-1,1)[0]
+        # Correct for the test function used, see documentation
+        # [0], since integrate.quad outputs result[0] and upper bound of error[1]
+        dst = np.linalg.norm(np.subtract(segment[1],segment[0]))
+        # multiplication with length of segment due to normalization
+        Ein[m] =  dst*(IntReal+ 1j*IntImag)
     return Ein
+
+# def DiscritizeEin(coordinates, wavelength, angle):
+#     # Create an array for the number of segments
+#     # the code does not close the contour, do so manually
+#     M = len(coordinates)-1
+#     Ein = np.zeros(M, dtype=np.complex128)
+#     # values of Ein are complex so matrix needs to be able to handle complex values
+#     # Overwrite each datapoint with the actual value of the Ein field
+#     # Differentiate between the closed and open surface scenarios:
+#     if np.array_equal(coordinates[0], coordinates[-1]): # Closed
+#         for m in np.arange(M):
+#             # Sample the E field for varying coordinates, based on the testing Function
+#             # The loop goes over segments between 2 coordinates inside the array
+#             # Integrate.quad cannot deal with complex numbers (holds as of 22/03/2021)
+#             segment = Coordinates_to_segment(coordinates, m)
+#             EReal = lambda eta: np.real(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#             EImag = lambda eta: np.imag(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#             IntReal = integrate.quad(EReal, -1, 1)[0]
+#             IntImag = integrate.quad(EImag, -1, 1)[0]
+#             # Correct for the test function used, see documentation
+#             # [0], since integrate.quad outputs result[0] and upper bound of error[1]
+#             dst = np.linalg.norm(np.subtract(segment[1], segment[0]))
+#             # multiplication with length of segment due to normalization
+#             Ein[m] =  dst*(IntReal + 1j*IntImag)
+#     else: # Open surface
+#         for m in np.arange(M):
+#             segment = Coordinates_to_segment(coordinates, m)
+#             if m == 0: # There should be no "half" piecewise functions, so no falling rooftop at the start
+#                 EReal = lambda eta: np.real(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#                 EImag = lambda eta: np.imag(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#             elif m == M: # There should be no "half" piecewise functions, so no rising rooftop at the end
+#                 EReal = lambda eta: np.real(Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#                 EImag = lambda eta: np.imag(Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#             else:
+#                 EReal = lambda eta: np.real(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#                 EImag = lambda eta: np.imag(Rooftop_rising(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle) + Rooftop_falling(eta)*Efield_in(Pulsebase(eta, segment), wavelength, angle))
+#             IntReal = integrate.quad(EReal, -1, 1)[0]
+#             IntImag = integrate.quad(EImag, -1, 1)[0]
+#             dst = np.linalg.norm(np.subtract(segment[1], segment[0]))
+#             Ein[m] =  dst*(IntReal + 1j*IntImag)
+#     return Ein
 
 def Coordinates_to_segment(coordinates, set):
     # Take 2 positions in coordinates and return these to define the segment
@@ -163,14 +163,14 @@ def Coordinates_to_segment(coordinates, set):
 
 def Pulsebase(tau,segment):
     # Used for the test and basis function, creates a linear connection between the edges of the segment
-    xvec=segment[:, 0]
-    yvec=segment[:, 1]
-    # define the beginning and ending positions
+    xvec=segment[:,0]
+    yvec=segment[:,1]
+    # define the beginning and ending positions for -1 <= tau <= 1
     x1, x2, y1, y2 = xvec[0], xvec[1], yvec[0], yvec[1]
-    Xtau = tau*x2 + (1 - tau)*x1
-    Ytau = tau*y2 + (1 - tau)*y1
+    Xtau = (1/2)*((1 + tau)*x2 + (1 - tau)*x1)
+    Ytau = (1/2)*((1 + tau)*y2 + (1 - tau)*y1)
     # Return the values (x,y) based on tau
-    return [Xtau, Ytau]
+    return [Xtau,Ytau]
 
 def Rooftop_rising(tau):
     # For the rising triangle (/\^+), the shape is given as |\, where tau is

@@ -265,6 +265,36 @@ def Z_mi(coordinates,wavelength,m,i):
 #     ans  = (IntReal_1_mm +1j*IntImag_1_mm) + (IntReal_1_mp +1j*IntImag_1_mp) + (IntReal_1_pm +1j*IntImag_1_pm) + (IntReal_1_pp +1j*IntImag_1_pp)
 #     return omega*mu0/4*(ans)
 
+"""CAN ALSO USE THIS ONE, WHICH IS MORE OPTIMIZED AND READABLE"""
+# def Z_mn_optimized_via_Chatgpt(coordinates, wavelength, m, n):
+#     mu0 = 4 * pi * 10**-7
+#     c = 299792458
+#     omega = 2 * np.pi * c / wavelength
+
+#     def G(eta, ksi, mode, m, n):
+#         basis_funcs = {
+#             "mm": (Rooftop_falling(eta, m), Rooftop_falling(ksi, n)),
+#             "mp": (Rooftop_falling(eta, m), Rooftop_rising(ksi, n - 1)),
+#             "pm": (Rooftop_rising(eta, m - 1), Rooftop_falling(ksi, n)),
+#             "pp": (Rooftop_rising(eta, m - 1), Rooftop_rising(ksi, n - 1))
+#         }
+#         tf_eta, bf_ksi = basis_funcs[mode]
+#         return green(eta, ksi, coordinates, wavelength, m, n) * tf_eta * bf_ksi
+
+#     modes = ["mm", "mp", "pm", "pp"]
+#     integrals = {"real": {}, "imag": {}}
+
+#     for mode in modes:
+#         G_real = lambda eta, ksi: np.real(G(eta, ksi, mode, m, n))
+#         G_imag = lambda eta, ksi: np.imag(G(eta, ksi, mode, m, n))
+
+#         integrals["real"][mode] = integrate.dblquad(G_real, -1, 1, -1, 1)[0]
+#         integrals["imag"][mode] = integrate.dblquad(G_imag, -1, 1, -1, 1)[0]
+
+#     return omega * mu0 / 4 * sum(
+#         (integrals["real"][mode] + 1j * integrals["imag"][mode]) for mode in modes
+#     )
+
 def Z_mi_adj(coordinates,wavelength,m,i):
     # Special case, Greens function becomes singular on edge points
     mu0 = 4*pi*10**-7

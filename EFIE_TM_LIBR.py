@@ -235,6 +235,36 @@ def Z_mi(coordinates,wavelength,m,i):
     IntImag = integrate.dblquad(GImag, 0, 1, 0, 1)[0]
     return -1j*omega*mu0*(IntReal +1j*IntImag)
 
+"""WORK IN PROGRESS"""
+# def Z_mn(coordinates, wavelength, m, n):
+#     mu0 = 4*pi*10**-7
+#     c = 299792458
+#     omega = 2*pi*c/wavelength
+#     # Integrable Greens function, which is non-singular in this case
+#     """DO THE IF STATEMENT FOR OPEN/CLOSE CONDITION!!!"""
+#     GReal_1_mm = lambda eta, ksi: np.real(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_falling(eta, m)*Rooftop_falling(ksi, n))
+#     GReal_1_mp = lambda eta, ksi: np.real(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_falling(eta, m)*Rooftop_rising(ksi, n - 1))
+#     GReal_1_pm = lambda eta, ksi: np.real(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_rising(eta, m - 1)*Rooftop_falling(ksi, n))
+#     GReal_1_pp = lambda eta, ksi: np.real(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_rising(eta, m - 1)*Rooftop_rising(ksi, n - 1))
+    
+#     GImag_1_mm = lambda eta, ksi: np.imag(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_falling(eta, m)*Rooftop_falling(ksi, n))
+#     GImag_1_mp = lambda eta, ksi: np.imag(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_falling(eta, m)*Rooftop_rising(ksi, n - 1))
+#     GImag_1_pm = lambda eta, ksi: np.imag(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_rising(eta, m - 1)*Rooftop_falling(ksi, n))
+#     GImag_1_pp = lambda eta, ksi: np.imag(green(eta, ksi, coordinates, wavelength, m, n)*Rooftop_rising(eta, m - 1)*Rooftop_rising(ksi, n - 1))
+#     # Integrate.dblquad cannot deal with complex number (holds as of 22/03/2021)
+#     IntReal_1_mm = integrate.dblquad(GReal_1_mm, -1, 1, -1, 1)[0]
+#     IntReal_1_mp = integrate.dblquad(GReal_1_mp, -1, 1, -1, 1)[0]
+#     IntReal_1_pm = integrate.dblquad(GReal_1_pm, -1, 1, -1, 1)[0]
+#     IntReal_1_pp = integrate.dblquad(GReal_1_pp, -1, 1, -1, 1)[0]
+    
+#     IntImag_1_mm = integrate.dblquad(GImag_1_mm, -1, 1, -1, 1)[0]
+#     IntImag_1_mp = integrate.dblquad(GImag_1_mp, -1, 1, -1, 1)[0]
+#     IntImag_1_pm = integrate.dblquad(GImag_1_pm, -1, 1, -1, 1)[0]
+#     IntImag_1_pp = integrate.dblquad(GImag_1_pp, -1, 1, -1, 1)[0]
+    
+#     ans  = (IntReal_1_mm +1j*IntImag_1_mm) + (IntReal_1_mp +1j*IntImag_1_mp) + (IntReal_1_pm +1j*IntImag_1_pm) + (IntReal_1_pp +1j*IntImag_1_pp)
+#     return omega*mu0/4*(ans)
+
 def Z_mi_adj(coordinates,wavelength,m,i):
     # Special case, Greens function becomes singular on edge points
     mu0 = 4*pi*10**-7

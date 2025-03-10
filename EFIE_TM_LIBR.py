@@ -168,7 +168,7 @@ def Zmatrix(coordinates,wavelength):
             dst_m = segment_length(segment_m)
             dst_n = segment_length(segment_n)
             dst = dst_m*dst_n
-            if (coordinates[0] == coordinates[-1]).all(): # Closed
+            if (abs(coordinates[0] - coordinates[-1]) < 1e-8).all(): # Closed
                 if m == n or (m == M-1 and n == 0) or (m == 0 and n == M-1):
                     # The diagonal is singular
                     # The diag function already includes the distance, so we dont need to take it into account here
@@ -279,7 +279,7 @@ def Z_mn_left(coordinates, wavelength, m, n):
     
     # The indices are defined differently for closed and open surfaces (in the code only),
     # so we have to take that into account by using a -2 instead of a -1 in the rising function
-    if (coordinates[0] == coordinates[-1]).all(): # Closed
+    if (abs(coordinates[0] - coordinates[-1]) < 1e-8).all(): # Closed
         def G(eta, ksi, mode, m, n):
             # Intermediate function to calculate Green's function together with
             # the test & basis function to make the code more readable
@@ -337,7 +337,7 @@ def Z_mn_right(coordinates, wavelength, m, n):
     
     # The indices are defined differently for closed and open surfaces (in the code only),
     # so we have to take that into account by using a -2 instead of a -1 in the rising function
-    if (coordinates[0] == coordinates[-1]).all(): # Closed
+    if (abs(coordinates[0] - coordinates[-1]) < 1e-8).all(): # Closed
         def G(eta, ksi, mode, m, n):
             # Intermediate function to calculate Green's function together with
             # the test & basis function to make the code more readable

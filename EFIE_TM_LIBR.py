@@ -175,7 +175,7 @@ def Zmatrix(coordinates,wavelength):
                     Z[m, n] = Z_mn_diag(coordinates, wavelength, m, n)
                 elif abs(m - n) <= 1 or (m == M-2 and n == 0) or (m == M-1 and n == 1) or (m == 0 and n == M-2) or (m == 1 and n == M-1):
                     # One position is singular for adjacent segments
-                    Z[m, n] = Z_mn_adj(coordinates, wavelength, m, n)
+                    Z[m, n] = 0
                 else:
                     # These indices are non-singular
                     Z[m, n] = dst*(Z_mn_left(coordinates, wavelength, m, n) + Z_mn_right(coordinates, wavelength, m, n))
@@ -186,7 +186,7 @@ def Zmatrix(coordinates,wavelength):
                     Z[m, n] = Z_mn_diag(coordinates, wavelength, m, n)
                 elif abs(m - n) <= 1:
                     # One position is singular for adjacent segments
-                    Z[m, n] = Z_mn_adj(coordinates, wavelength, m, n)
+                    Z[m, n] = 0
                 else:
                     # These indices are non-singular
                     Z[m, n] = dst*(Z_mn_left(coordinates, wavelength, m, n) + Z_mn_right(coordinates, wavelength, m, n))
@@ -477,26 +477,58 @@ def Etot(Jz,R,coordinates,wavelength,angle):
             Etot[i] = Ein+Esc
     return Etot
 
-def Escatter(Jz,rho,coordinates,wavelength):
+# def Escatter(Jz,rho,coordinates,wavelength):
+#     # Calculate the Electric field scattered from the object on given coordinates
+#     mu0 = 4*pi*10**-7
+#     c = 299792458
+#     omega = 2*pi*c/wavelength
+#     G = np.zeros(len(Jz),dtype=np.complex128) # G can be complex so allocate complex matrix
+#     # Note length Jz = length coordinates-1
+#     for i in np.arange(len(Jz)):
+#         segment = Coordinates_to_segment(coordinates,i)
+#         GReal = lambda tau: np.real(greenEsc(rho,tau,segment,wavelength))
+#         GImag = lambda tau: np.imag(greenEsc(rho,tau,segment,wavelength))
+#         IntReal = integrate.quad(GReal, 0, 1)[0]
+#         IntImag = integrate.quad(GImag, 0, 1)[0]
+#         # Correct for the basis function used
+#         dst = np.linalg.norm(np.subtract(segment[1],segment[0]))
+#         G[i] = dst*(IntReal + 1j*IntImag)
+#     return (omega*mu0/4)*np.dot(Jz,G)
+
+def Escatter(Jz, rho, coordinates, wavelength):
     # Calculate the Electric field scattered from the object on given coordinates
     mu0 = 4*pi*10**-7
+    epsilon0 = 8.854187812813e-12
     c = 299792458
     omega = 2*pi*c/wavelength
-    G = np.zeros(len(Jz),dtype=np.complex128) # G can be complex so allocate complex matrix
+    G = np.zeros(len(Jz), dtype=np.complex128) # G can be complex so allocate complex matrix
+    GTriangle = np.zeros(len(Jz), dtype=np.complex128)
     # Note length Jz = length coordinates-1
     for i in np.arange(len(Jz)):
         segment = Coordinates_to_segment(coordinates,i)
         GReal = lambda tau: np.real(greenEsc(rho,tau,segment,wavelength))
         GImag = lambda tau: np.imag(greenEsc(rho,tau,segment,wavelength))
-        IntReal = integrate.quad(GReal, 0, 1)[0]
-        IntImag = integrate.quad(GImag, 0, 1)[0]
+        IntReal = integrate.quad(GReal, -1, 1)[0]
+        IntImag = integrate.quad(GImag, -1, 1)[0]
+        
+        GRealTriangle = lambda tau: np.real(greenEscTriangle(rho,tau,segment,wavelength))
+        GImagTriangle = lambda tau: np.imag(greenEscTriangle(rho,tau,segment,wavelength))
+        IntRealTriangle = integrate.quad(GRealTriangle, -1, 1)[0]
+        IntImagTriangle = integrate.quad(GImagTriangle, -1, 1)[0]
         # Correct for the basis function used
-        dst = np.linalg.norm(np.subtract(segment[1],segment[0]))
+        dst = segment_length(segment)
         G[i] = dst*(IntReal + 1j*IntImag)
-    return (omega*mu0/4)*np.dot(Jz,G)
+        GTriangle[i] = dst*(IntRealTriangle + 1j*IntImagTriangle)
+    return (1j*omega*mu0/(2*pi))*np.dot(Jz,GTriangle) - (1/(1j*omega*epsilon0*2*pi))*np.dot(Jz,G)
 
 def greenEsc(r,tau,segment,wavelength):
     # Special case, only the basis function applied
     k0 = 2*pi/wavelength
     Pn = Pulsebase(tau,segment)
     return kv(0, 1j*k0*np.linalg.norm(np.subtract(r,Pn)))
+
+def greenEscTriangle(r,tau,segment,wavelength):
+    # Special case, only the basis function applied
+    k0 = 2*pi/wavelength
+    Pn = Pulsebase(tau,segment)
+    return Rooftop_falling(tau, 2)*kv(0, 1j*k0*np.linalg.norm(np.subtract(r,Pn))) + Rooftop_rising(tau, 2)*kv(0, 1j*k0*np.linalg.norm(np.subtract(r,Pn)))

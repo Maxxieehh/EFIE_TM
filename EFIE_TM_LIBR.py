@@ -126,8 +126,39 @@ def Efield_in(r, wavelength, angle):
     k0 = 2*pi/wavelength
     return E0*np.exp(1j*k0*(cos(angle)*x + sin(angle)*y))
 
+def Segment_center(segment):
+    return (segment[0] + segment[1]) / 2
+
 def segment_length(segment):
     return np.linalg.norm(np.subtract(segment[1], segment[0]))
+
+def Normal_vector(segment):
+    x0, y0 = segment[0]
+    x1, y1 = segment[1]
+    dx, dy = x1 - x0, y1 - y0
+    length = segment_length(segment)
+    
+    # Compute unit normal (-dy, dx) and normalize
+    nu = np.array([-dy / length, dx / length])
+
+    # Ensure normal is outward by checking dot product with radial direction
+    midpoint = Segment_center(segment)
+    radial_direction = midpoint / np.linalg.norm(midpoint)
+    
+    if np.dot(nu, radial_direction) < 0:
+        nu = -nu  # Flip normal if it's pointing inward    
+    return nu
+
+def Tangent_vector(segment):
+    x0, y0 = segment[0]
+    x1, y1 = segment[1]
+    dx, dy = x1 - x0, y1 - y0
+    length = segment_length(segment)
+    
+    # Compute unit tangent (dy, dx) and normalize
+    tau = np.array([dx / length, dy / length])
+    
+    return tau
 
 """HAS YET TO BE LOOKED AT! DEFINITELY COMPLETELY WRONG!"""
 ##-----------Functions used for the Z matrix------------------------------
@@ -389,7 +420,7 @@ def Z_mn_diag(coordinates, wavelength, m, n):
     
     Is = Self_term_integral(coordinates, wavelength, m, n) 
     # Is returns [f(1), f(eta*ksi)], so for the left integral, we need both terms, while the right integral only needs 1
-    return 1j*omega*mu0/(2*pi)*sum(Is) - 1/(1j*omega*epsilon0)*(1/(2*pi))*(1/4)*Is[0]
+    return 1j*omega*mu0/(2*pi)*(1/4)*sum(Is) - 1/(1j*omega*epsilon0)*(1/(2*pi))*(1/4)*Is[0]
     
 def Self_term_integral(coordinates, wavelength, m, n):
     # This function gives the solution to the self integral term defined as:
@@ -470,65 +501,33 @@ def Etot(Jz,R,coordinates,wavelength,angle):
     # Calculate the total field on given coordinates
     M = len(R)
     Etot = np.zeros(M,dtype=np.complex128)
-    for i in np.arange(M):
-            r = R[i]
+    for n in np.arange(M):
+            r = R[n]
             Esc = Escatter(Jz,r,coordinates,wavelength)
             Ein = Efield_in(r,wavelength,angle)
-            Etot[i] = Ein+Esc
+            Etot[n] = Ein + Esc
     return Etot
 
-# def Escatter(Jz,rho,coordinates,wavelength):
-#     # Calculate the Electric field scattered from the object on given coordinates
-#     mu0 = 4*pi*10**-7
-#     c = 299792458
-#     omega = 2*pi*c/wavelength
-#     G = np.zeros(len(Jz),dtype=np.complex128) # G can be complex so allocate complex matrix
-#     # Note length Jz = length coordinates-1
-#     for i in np.arange(len(Jz)):
-#         segment = Coordinates_to_segment(coordinates,i)
-#         GReal = lambda tau: np.real(greenEsc(rho,tau,segment,wavelength))
-#         GImag = lambda tau: np.imag(greenEsc(rho,tau,segment,wavelength))
-#         IntReal = integrate.quad(GReal, 0, 1)[0]
-#         IntImag = integrate.quad(GImag, 0, 1)[0]
-#         # Correct for the basis function used
-#         dst = np.linalg.norm(np.subtract(segment[1],segment[0]))
-#         G[i] = dst*(IntReal + 1j*IntImag)
-#     return (omega*mu0/4)*np.dot(Jz,G)
-
-def Escatter(Jz, rho, coordinates, wavelength):
+def Escatter(Jz,rho,coordinates,wavelength):
     # Calculate the Electric field scattered from the object on given coordinates
     mu0 = 4*pi*10**-7
-    epsilon0 = 8.854187812813e-12
     c = 299792458
     omega = 2*pi*c/wavelength
-    G = np.zeros(len(Jz), dtype=np.complex128) # G can be complex so allocate complex matrix
-    GTriangle = np.zeros(len(Jz), dtype=np.complex128)
+    G = np.zeros(len(Jz),dtype=np.complex128) # G can be complex so allocate complex matrix
     # Note length Jz = length coordinates-1
-    for i in np.arange(len(Jz)):
-        segment = Coordinates_to_segment(coordinates,i)
+    for n in np.arange(len(Jz)):
+        segment = Coordinates_to_segment(coordinates,n)
         GReal = lambda tau: np.real(greenEsc(rho,tau,segment,wavelength))
         GImag = lambda tau: np.imag(greenEsc(rho,tau,segment,wavelength))
         IntReal = integrate.quad(GReal, -1, 1)[0]
         IntImag = integrate.quad(GImag, -1, 1)[0]
-        
-        GRealTriangle = lambda tau: np.real(greenEscTriangle(rho,tau,segment,wavelength))
-        GImagTriangle = lambda tau: np.imag(greenEscTriangle(rho,tau,segment,wavelength))
-        IntRealTriangle = integrate.quad(GRealTriangle, -1, 1)[0]
-        IntImagTriangle = integrate.quad(GImagTriangle, -1, 1)[0]
         # Correct for the basis function used
-        dst = segment_length(segment)
-        G[i] = dst*(IntReal + 1j*IntImag)
-        GTriangle[i] = dst*(IntRealTriangle + 1j*IntImagTriangle)
-    return (1j*omega*mu0/(2*pi))*np.dot(Jz,GTriangle) - (1/(1j*omega*epsilon0*2*pi))*np.dot(Jz,G)
+        dst = np.linalg.norm(np.subtract(segment[1],segment[0]))
+        G[n] = dst*(IntReal + 1j*IntImag)
+    return (1j*omega*mu0/(2*pi))*np.dot(Jz,G)
 
 def greenEsc(r,tau,segment,wavelength):
     # Special case, only the basis function applied
     k0 = 2*pi/wavelength
     Pn = Pulsebase(tau,segment)
     return kv(0, 1j*k0*np.linalg.norm(np.subtract(r,Pn)))
-
-def greenEscTriangle(r,tau,segment,wavelength):
-    # Special case, only the basis function applied
-    k0 = 2*pi/wavelength
-    Pn = Pulsebase(tau,segment)
-    return Rooftop_falling(tau, 2)*kv(0, 1j*k0*np.linalg.norm(np.subtract(r,Pn))) + Rooftop_rising(tau, 2)*kv(0, 1j*k0*np.linalg.norm(np.subtract(r,Pn)))

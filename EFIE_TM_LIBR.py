@@ -149,6 +149,18 @@ def Normal_vector(segment):
         nu = -nu  # Flip normal if it's pointing inward    
     return nu
 
+def Normal_vector_coefficients(coordinates, segment, m):
+    segment = Coordinates_to_segment(coordinates, m)
+    midpoint = Segment_center(segment)
+    normal = Normal_vector(segment)
+    
+    x1, x2 = midpoint[0], midpoint[0] + normal[0]
+    y1, y2 = midpoint[1], midpoint[1] + normal[1]
+    
+    nux, nuy = x2 - x1, y2 - y1
+    
+    return [nux, nuy]
+
 def Tangent_vector(segment):
     x0, y0 = segment[0]
     x1, y1 = segment[1]

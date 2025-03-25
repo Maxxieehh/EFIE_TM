@@ -369,34 +369,43 @@ def Zmn_calculator_2x2matrix_method(coordinates, wavelength):
             integrantMP_real = lambda eta, ksi: 0.5*(1 - eta)*0.5*(1 + ksi)*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
             integrantMP_imag = lambda eta, ksi: 0.5*(1 - eta)*0.5*(1 + ksi)*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
             
+            integrantPP_real_R = lambda eta, ksi: 0.5*0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_P)))
+            integrantPP_imag_R = lambda eta, ksi: 0.5*0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_P)))
+            integrantMM_real_R = lambda eta, ksi: -0.5*-0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_M)))
+            integrantMM_imag_R = lambda eta, ksi: -0.5*-0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_M)))
+            integrantPM_real_R = lambda eta, ksi: 0.5*-0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_M)))
+            integrantPM_imag_R = lambda eta, ksi: 0.5*-0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_M)))
+            integrantMP_real_R = lambda eta, ksi: -0.5*0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
+            integrantMP_imag_R = lambda eta, ksi: -0.5*0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
+            
             # Remove diagonal terms from the calculations
-            if(m == n):
-                intPP_real = 0
-                intPP_imag = 0
-                intMM_real = 0
-                intMM_imag = 0
-                intPM_real = 0
-                intPM_imag = 0
-                intMP_real = 0
-                intMP_imag = 0
-            elif(m-1 == n or (n == 0 and m == M-1)): # Super-diagonal
-                intPP_real = 0
-                intPP_imag = 0
-                intMM_real = 0
-                intMM_imag = 0
-                intPM_real = 0
-                intPM_imag = 0
-                intMP_real = 0
-                intMP_imag = 0
-            elif(n-1 == m or (m == 0 and n == M-1)): # Sub-diagonal
-                intPP_real = 0
-                intPP_imag = 0
-                intMM_real = 0
-                intMM_imag = 0
-                intPM_real = 0
-                intPM_imag = 0
-                intMP_real = 0
-                intMP_imag = 0
+            if(m == n or m-1 == n or (n == 0 and m == M-1) or n-1 == m or (m == 0 and n == M-1)):
+                intPP_real, intPP_imag = 0, 0
+                intMM_real, intMM_imag = 0, 0
+                intPM_real, intPM_imag = 0, 0
+                intMP_real, intMP_imag = 0, 0
+                intPP_real_R, intPP_imag_R = 0, 0
+                intMM_real_R, intMM_imag_R = 0, 0
+                intPM_real_R, intPM_imag_R = 0, 0
+                intMP_real_R, intMP_imag_R = 0, 0
+            # elif(m-1 == n or (n == 0 and m == M-1)): # Super-diagonal
+            #     intPP_real = 0
+            #     intPP_imag = 0
+            #     intMM_real = 0
+            #     intMM_imag = 0
+            #     intPM_real = 0
+            #     intPM_imag = 0
+            #     intMP_real = 0
+            #     intMP_imag = 0
+            # elif(n-1 == m or (m == 0 and n == M-1)): # Sub-diagonal
+            #     intPP_real = 0
+            #     intPP_imag = 0
+            #     intMM_real = 0
+            #     intMM_imag = 0
+            #     intPM_real = 0
+            #     intPM_imag = 0
+            #     intMP_real = 0
+            #     intMP_imag = 0
             else:
                 intPP_real = integrate.dblquad(integrantPP_real, -1, 1, -1, 1)[0]
                 intPP_imag = integrate.dblquad(integrantPP_imag, -1, 1, -1, 1)[0]
@@ -406,16 +415,24 @@ def Zmn_calculator_2x2matrix_method(coordinates, wavelength):
                 intPM_imag = integrate.dblquad(integrantPM_imag, -1, 1, -1, 1)[0]
                 intMP_real = integrate.dblquad(integrantMP_real, -1, 1, -1, 1)[0]
                 intMP_imag = integrate.dblquad(integrantMP_imag, -1, 1, -1, 1)[0]
+                intPP_real_R = integrate.dblquad(integrantPP_real_R, -1, 1, -1, 1)[0]
+                intPP_imag_R = integrate.dblquad(integrantPP_imag_R, -1, 1, -1, 1)[0]
+                intMM_real_R = integrate.dblquad(integrantMM_real_R, -1, 1, -1, 1)[0]
+                intMM_imag_R = integrate.dblquad(integrantMM_imag_R, -1, 1, -1, 1)[0]
+                intPM_real_R = integrate.dblquad(integrantPM_real_R, -1, 1, -1, 1)[0]
+                intPM_imag_R = integrate.dblquad(integrantPM_imag_R, -1, 1, -1, 1)[0]
+                intMP_real_R = integrate.dblquad(integrantMP_real_R, -1, 1, -1, 1)[0]
+                intMP_imag_R = integrate.dblquad(integrantMP_imag_R, -1, 1, -1, 1)[0]
             
             Zmn_left[m,n]       += dstm_P*dstn_P*1j*omega*mu0*(tauxm_P*tauxn_P + tauym_P*tauyn_P)*(intPP_real + 1j*intPP_imag)
             Zmn_left[m-1,n-1]   += dstm_M*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_M + tauym_M*tauyn_M)*(intMM_real + 1j*intMM_imag)
             Zmn_left[m,n-1]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_P*tauxn_M + tauym_P*tauyn_M)*(intPM_real + 1j*intPM_imag)
             Zmn_left[m-1,n]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_P + tauym_M*tauyn_P)*(intMP_real + 1j*intMP_imag)
                 
-            Zmn_right[m,n]      += dstm_P*dstn_P*(tauxm_P**2 + tauym_P**2)/(2*pi*1j*omega*epsilon0)*(intPP_real + 1j*intPP_imag)
-            Zmn_right[m-1,n-1]  += dstm_M*dstn_M*(tauxm_M**2 + tauym_M**2)/(2*pi*1j*omega*epsilon0)*(intMM_real + 1j*intMM_imag)
-            Zmn_right[m,n-1]    += dstm_P*dstn_M*(tauxm_P**2 + tauym_M**2)/(2*pi*1j*omega*epsilon0)*(intPM_real + 1j*intPM_imag)
-            Zmn_right[m-1,n]    += dstm_M*dstn_P*(tauxm_M**2 + tauym_P**2)/(2*pi*1j*omega*epsilon0)*(intMP_real + 1j*intMP_imag)
+            Zmn_right[m,n]      += dstm_P*dstn_P*(tauxm_P**2 + tauym_P**2)/(2*pi*1j*omega*epsilon0)*(intPP_real_R + 1j*intPP_imag_R)
+            Zmn_right[m-1,n-1]  += dstm_M*dstn_M*(tauxm_M**2 + tauym_M**2)/(2*pi*1j*omega*epsilon0)*(intMM_real_R + 1j*intMM_imag_R)
+            Zmn_right[m,n-1]    += dstm_P*dstn_M*(tauxm_P**2 + tauym_M**2)/(2*pi*1j*omega*epsilon0)*(intPM_real_R + 1j*intPM_imag_R)
+            Zmn_right[m-1,n]    += dstm_M*dstn_P*(tauxm_M**2 + tauym_P**2)/(2*pi*1j*omega*epsilon0)*(intMP_real_R + 1j*intMP_imag_R)
             
     Zmn = Zmn_left + Zmn_right
     
@@ -632,6 +649,7 @@ def greenEsc(r,ksi,segment,wavelength):
     
     return G*(dx/r_norm), G*(dy/r_norm)
 
+# UNCOMMENT THIS PART TO TEST FUNCTIONS SEPARATELY!
 # ## INPUTS
 # angle = 1.05*pi/2
 # c = 299792458
@@ -644,10 +662,10 @@ def greenEsc(r,ksi,segment,wavelength):
 # R = 1
 # Data = createcircle(M,R)
 
-# # # # ## MAIN
-# Zmn, Zmn_left, Zmn_right = Zmn_calculator(Data, wavelength)
-# # # Z_diag_test = Zmn_diag_calculator(Data, wavelength)
-# # # print(Z_diag_test)    
+# # # # # ## MAIN
+# Zmn, Zmn_left, Zmn_right = Zmn_calculator_2x2matrix_method(Data, wavelength)
+# # # # Z_diag_test = Zmn_diag_calculator(Data, wavelength)
+# # # # print(Z_diag_test)    
 
 
 

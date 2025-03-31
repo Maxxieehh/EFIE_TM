@@ -53,7 +53,7 @@ wavelength = c/f
 
 ##------------------------Generate shape--------------------
 # Use the circle
-M = 30
+M = 10
 R = 1
 Data = createcircle(M,R)
 
@@ -119,13 +119,13 @@ ymin = -1
 ymax = 7
 x, y = np.linspace(xmin,xmax,N), np.linspace(ymin,ymax,N)
 
-Etot_x, Etot_y, Ein_x, Ein_y, Esc_x, Esc_y = np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128)
+Etot_x, Etot_y, Ein, Ein_x, Ein_y, Esc_x, Esc_y = np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128),np.zeros((N,N),dtype=np.complex128)
 for i in np.arange(N):
     for j in np.arange(N):
         r = np.asarray([x[i],y[j]])
         Ein_x[i,j], Ein_y[i,j] = tm.Efield_in(r,wavelength,angle)
         Esc_x[i,j], Esc_y[i,j] = tm.Escatter(Jz_x, Jz_y ,r ,boundary_points ,wavelength)
-        Etot_x[i,j], Etot_y[i,j] = Ein_x[i,j] + Esc_x[i,j], Ein_y[i,j] + Esc_y[i,j]
+        Etot_x[i,j], Etot_y[i,j] = Esc_x[i,j] + Ein_x[i,j], Esc_y[i,j] + Ein_y[i,j]
 end = time.time()
 time_grid = end-start
 

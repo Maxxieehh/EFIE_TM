@@ -36,14 +36,23 @@ def DiscritizeEin(coordinates, wavelength, angle):
         # The loop goes over segments between 2 coordinates inside the array
         # Integrate.quad cannot deal with complex numbers (holds as of 22/03/2021)
         seg = Coordinates_to_segment(coordinates, m)
+        if m == 0:
+            seg_prev = Coordinates_to_segment(coordinates, -2)
+        else:
+            seg_prev = Coordinates_to_segment(coordinates, m-1)
+        
+        dst = segment_length(seg)
+        dst_prev = segment_length(seg_prev)
+        
         [tau_x, tau_y] = Tangent_vector_coefficients(seg)
+        [tau_x_prev, tau_y_prev] = Tangent_vector_coefficients(seg_prev)
         
         # Define real and imaginary components of X and Y separately
         # Tangent vectors added due to the crossproduct with nu (see documentation)
-        EReal_x = lambda eta: tau_x*np.real(Efield_in(rho(eta, seg), wavelength, angle)[0])
-        EImag_x = lambda eta: tau_x*np.imag(Efield_in(rho(eta, seg), wavelength, angle)[0])
-        EReal_y = lambda eta: tau_y*np.real(Efield_in(rho(eta, seg), wavelength, angle)[1])
-        EImag_y = lambda eta: tau_y*np.imag(Efield_in(rho(eta, seg), wavelength, angle)[1])
+        EReal_x = lambda eta: dst*RT_min(eta)*tau_x*np.real(Efield_in(rho(eta, seg), wavelength, angle)[0]) + dst_prev*RT_plus(eta)*tau_x_prev*np.real(Efield_in(rho(eta, seg_prev), wavelength, angle)[0])
+        EImag_x = lambda eta: dst*RT_min(eta)*tau_x*np.imag(Efield_in(rho(eta, seg), wavelength, angle)[0]) + dst_prev*RT_plus(eta)*tau_x_prev*np.imag(Efield_in(rho(eta, seg_prev), wavelength, angle)[0])
+        EReal_y = lambda eta: dst*RT_min(eta)*tau_y*np.real(Efield_in(rho(eta, seg), wavelength, angle)[1]) + dst_prev*RT_plus(eta)*tau_y_prev*np.real(Efield_in(rho(eta, seg_prev), wavelength, angle)[0])
+        EImag_y = lambda eta: dst*RT_min(eta)*tau_y*np.imag(Efield_in(rho(eta, seg), wavelength, angle)[1]) + dst_prev*RT_plus(eta)*tau_y_prev*np.imag(Efield_in(rho(eta, seg_prev), wavelength, angle)[0])
         
         # Perform the integration
         IntReal_x = integrate.quad(EReal_x, -1, 1)[0]
@@ -51,10 +60,8 @@ def DiscritizeEin(coordinates, wavelength, angle):
         IntReal_y = integrate.quad(EReal_y, -1, 1)[0]
         IntImag_y = integrate.quad(EImag_y, -1, 1)[0]
         
-        # Normalize by segment length
-        dst = segment_length(seg)
-        Ein_x[m] = dst*(IntReal_x + 1j*IntImag_x)
-        Ein_y[m] = dst*(IntReal_y + 1j*IntImag_y)
+        Ein_x[m] = (IntReal_x + 1j*IntImag_x)
+        Ein_y[m] = (IntReal_y + 1j*IntImag_y)
     
     return Ein_x, Ein_y
 
@@ -70,50 +77,11 @@ def Efield_in(r, wavelength, angle):
     k0 = 2*pi/wavelength
     
     # Compute Ex and Ey separately
-    Ex = E0*cos(angle)*exp(1j*k0*(cos(angle)*x + sin(angle)*y))
-    Ey = E0*sin(angle)*exp(1j*k0*(cos(angle)*x + sin(angle)*y))
+    Ex = -E0*sin(angle)*exp(1j*k0*(cos(angle)*x + sin(angle)*y))
+    Ey = E0*cos(angle)*exp(1j*k0*(cos(angle)*x + sin(angle)*y))
     
     return Ex, Ey
         
-        
-
-# def DiscritizeEin(coordinates,wavelength,angle):
-#     # Create an array for the number of segments
-#     # the code does not close the contour, do so manually
-#     M = len(coordinates)-1
-#     Ein = np.zeros(M,dtype=np.complex128)
-#     # values of Ein are complex so matrix needs to be able to handle complex values
-#     # Overwrite each datapoint with the actual value of the Ein field
-#     for m in np.arange(M):
-#         # Sample the E field for varying coordinates, based on the testing Function
-#         # The loop goes over segments between 2 coordinates inside the array
-#         # Integrate.quad cannot deal with complex numbers (holds as of 22/03/2021)
-#         segment = Coordinates_to_segment(coordinates,m)
-#         [nu_x, nu_y] = Normal_vector_coefficients(segment)
-#         EReal = lambda eta: np.real(Efield_in(rho(eta, segment),wavelength,angle))
-#         EImag = lambda eta: np.imag(Efield_in(rho(eta, segment),wavelength,angle))
-#         IntReal = integrate.quad(EReal,-1,1)[0]
-#         IntImag = integrate.quad(EImag,-1,1)[0]
-#         # Correct for the test function used, see documentation
-#         # [0], since integrate.quad outputs result[0] and upper bound of error[1]
-#         dst = segment_length(segment)
-#         # multiplication with length of segment due to normalization
-#         Ein[m] =  dst*(IntReal+ 1j*IntImag)
-#     return Ein
-
-# def Efield_in(r,wavelength,angle):
-#     # Calculate the electric field value based on:
-#     # the x and y position (in r), wavelength and input angle
-#     mu0 = pi*4e-7
-#     epsilon0 = 8.854187812813e-12
-#     H0 = 1
-#     E0 = H0*sqrt(mu0/epsilon0) # Amplitude of incident wave
-#     # Electric field is normalized to a magnetic field of 1
-#     x, y = r[0], r[1]
-#     # Assuming plane wave in losless material
-#     k0 = 2*pi/wavelength
-#     return E0*exp(1j*k0*(cos(angle)*x + sin(angle)*y))
-
 def closed(coordinates):
     return (abs(coordinates[0] - coordinates[-1]) < 1e-8).all()
 
@@ -201,13 +169,22 @@ def rho(t, segment):
     return [Xtau,Ytau]
 
 def Zmn_calculator(coordinates, wavelength):
-    # Zmn_left = Zmn_calculator_left(coordinates, wavelength)
-    # Zmn_right = Zmn_calculator_right(coordinates, wavelength)
-    # Zmn = Zmn_left + Zmn_right
-    # #Zmn, ZmnLeft, ZmnRight = Zmn_calculator_2x2matrix_method(coordinates, wavelength)
-    # Zmn_diag = Zmn_diag_calculator_V2(coordinates, wavelength)
-    # np.fill_diagonal(Zmn, Zmn_diag.flatten())
-    Zmn = np.asarray([
+    Zmn_left = Zmn_calculator_left(coordinates, wavelength)
+    Zmn_right = Zmn_calculator_right_V2(coordinates, wavelength)
+    Zmn = Zmn_left + Zmn_right
+    
+    # Add the diagonal to the Z matrix
+    Zmn_diag = Zmn_diag_calculator_V2(coordinates, wavelength)
+    np.fill_diagonal(Zmn, Zmn_diag.flatten())
+    
+    # Add the super and sub diagonal to the matrix
+    Zmn_adj = Zmn_adj_calculator(coordinates, wavelength)
+    np.fill_diagonal(Zmn[1:], Zmn_adj.flatten()) # sub
+    np.fill_diagonal(Zmn[:,1:], Zmn_adj.flatten()) # super
+    Zmn[0,M-2], Zmn[M-2,0] = Zmn_adj[0], Zmn_adj[0]
+    
+    # Uncomment this if you want to use the matrix provided by Mathematica
+    Zmn_mathmematica = np.asarray([
           [13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j],
           [11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j],
           [7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j],
@@ -298,6 +275,38 @@ def Zmn_calculator_left(coordinates, wavelength):
             
     return Zmn_left
 
+def Zmn_calculator_right_V2(coordinates, wavelength):
+    M = len(coordinates)-1
+    k0 = 2*pi/wavelength
+    epsilon0 = 8.854187812813e-12
+    omega = 2*pi*c/wavelength
+    
+    Zmn_right = np.zeros((M,M), dtype=np.complex128)
+    
+    for m in range(M):
+        print(m)
+        for n in range(M):
+            segment_m = Coordinates_to_segment(coordinates, m)
+            segment_n = Coordinates_to_segment(coordinates, n)
+            
+            dst_m = segment_length(segment_m)/2
+            dst_n = segment_length(segment_n)/2
+            dst= dst_m*dst_n
+            
+            D = lambda eta, ksi, segm, segn: np.linalg.norm(np.subtract(rho(eta, segm), rho(ksi, segn)))
+            green = lambda eta, ksi, segm, segn: 1/(2*pi)*kv(0, 1j*k0*D(eta, ksi, segm, segn))
+            
+            integrant_real = lambda eta, ksi: np.real(green(eta, ksi, segment_m, segment_n))
+            integrant_imag = lambda eta, ksi: np.imag(green(eta, ksi, segment_m, segment_n))
+            if(m == n or m-1 == n or (n == 0 and m == M-1) or n-1 == m or (m == 0 and n == M-1)):
+                I_real, I_imag = 0, 0
+            else:
+                I_real = integrate.dblquad(integrant_real, -1, 1, -1, 1)[0]
+                I_imag = integrate.dblquad(integrant_imag, -1, 1, -1, 1)[0]
+            Zmn_right[m,n] = dst/(1j*omega*epsilon0)*(I_real + 1j*I_imag)
+                
+    return Zmn_right
+                
 def Zmn_calculator_right(coordinates, wavelength):
     M = len(coordinates)-1
     k0 = 2*pi/wavelength
@@ -369,10 +378,12 @@ def Zmn_calculator_right(coordinates, wavelength):
 #     epsilon0 = 8.854187812813e-12
 #     c = 299792458
 #     omega = 2*pi*c/wavelength
+#     gamma_e = 0.577215664901532860606512090082402431042159335
     
 #     # Predefine the sizes of the output matrices
 #     Zmn_left = np.zeros((M,M), dtype=np.complex128)
 #     Zmn_right = np.zeros((M,M), dtype=np.complex128)
+#     Zmn_diag = np.zeros((M,1), dtype=np.complex128)
     
 #     for n in np.arange(M):
 #         print(n) # Used as a check to see how far along we are
@@ -435,7 +446,17 @@ def Zmn_calculator_right(coordinates, wavelength):
             
 #             # Remove (tri-)diagonal terms from the calculations, as these create
 #             # singularities, which Python is not able to numerically calculate.
-#             if(m == n or m-1 == n or (n == 0 and m == M-1) or n-1 == m or (m == 0 and n == M-1)):
+#             if(m == n):
+#                 int_PP = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dstm_P/2) + gamma_e))
+#                 int_MM = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dstm_M/2) + gamma_e))
+#                 int_PM = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*((dstm_P + dstn_M)/2)/2) + gamma_e))
+#                 int_MP = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*((dstm_M + dstn_P)/2)/2) + gamma_e))
+                
+#                 Zmn_left[m,n]       += (dstm_P*dstn_P)*1j*omega*mu0*(int_PP)
+#                 Zmn_left[m-1,n-1]   += (dstm_M*dstn_M)*1j*omega*mu0*(int_MM)
+#                 Zmn_left[m,n-1]     += (dstm_P*dstn_M)*1j*omega*mu0*(int_PM)
+#                 Zmn_left[m-1,n]     += (dstm_M*dstn_P)*1j*omega*mu0*(int_MP)
+#             elif(m-1 == n or (n == 0 and m == M-1) or n-1 == m or (m == 0 and n == M-1)):
 #                 intPP_real, intPP_imag = 0, 0
 #                 intMM_real, intMM_imag = 0, 0
 #                 intPM_real, intPM_imag = 0, 0
@@ -461,23 +482,23 @@ def Zmn_calculator_right(coordinates, wavelength):
 #                 intPM_imag_R = integrate.dblquad(integrantPM_imag_R, -1, 1, -1, 1)[0]
 #                 intMP_real_R = integrate.dblquad(integrantMP_real_R, -1, 1, -1, 1)[0]
 #                 intMP_imag_R = integrate.dblquad(integrantMP_imag_R, -1, 1, -1, 1)[0]
-            
-#             # Add the prefactors to the calculated integral based on the location
-#             # of the element in the Z matrix for both the left and right integrals.
-#             Zmn_left[m,n]       += dstm_P*dstn_P*1j*omega*mu0*(tauxm_P*tauxn_P + tauym_P*tauyn_P)*(intPP_real + 1j*intPP_imag)
-#             Zmn_left[m-1,n-1]   += dstm_M*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_M + tauym_M*tauyn_M)*(intMM_real + 1j*intMM_imag)
-#             Zmn_left[m,n-1]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_P*tauxn_M + tauym_P*tauyn_M)*(intPM_real + 1j*intPM_imag)
-#             Zmn_left[m-1,n]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_P + tauym_M*tauyn_P)*(intMP_real + 1j*intMP_imag)
-                
-#             Zmn_right[m,n]      += dstm_P*dstn_P*(tauxm_P**2 + tauym_P**2)/(1j*omega*epsilon0)*(intPP_real_R + 1j*intPP_imag_R)
-#             Zmn_right[m-1,n-1]  += dstm_M*dstn_M*(tauxm_M**2 + tauym_M**2)/(1j*omega*epsilon0)*(intMM_real_R + 1j*intMM_imag_R)
-#             Zmn_right[m,n-1]    += dstm_P*dstn_M*(tauxm_P**2 + tauym_P**2)/(1j*omega*epsilon0)*(intPM_real_R + 1j*intPM_imag_R)
-#             Zmn_right[m-1,n]    += dstm_M*dstn_P*(tauxm_M**2 + tauym_M**2)/(1j*omega*epsilon0)*(intMP_real_R + 1j*intMP_imag_R)
+
+#                 # Add the prefactors to the calculated integral based on the location
+#                 # of the element in the Z matrix for both the left and right integrals.
+#                 Zmn_left[m,n]       += dstm_P*dstn_P*1j*omega*mu0*(tauxm_P*tauxn_P + tauym_P*tauyn_P)*(intPP_real + 1j*intPP_imag)
+#                 Zmn_left[m-1,n-1]   += dstm_M*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_M + tauym_M*tauyn_M)*(intMM_real + 1j*intMM_imag)
+#                 Zmn_left[m,n-1]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_P*tauxn_M + tauym_P*tauyn_M)*(intPM_real + 1j*intPM_imag)
+#                 Zmn_left[m-1,n]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_P + tauym_M*tauyn_P)*(intMP_real + 1j*intMP_imag)
+                    
+#                 Zmn_right[m,n]      += dstm_P*dstn_P*(tauxm_P**2 + tauym_P**2)/(1j*omega*epsilon0)*(intPP_real_R + 1j*intPP_imag_R)
+#                 Zmn_right[m-1,n-1]  += dstm_M*dstn_M*(tauxm_M**2 + tauym_M**2)/(1j*omega*epsilon0)*(intMM_real_R + 1j*intMM_imag_R)
+#                 Zmn_right[m,n-1]    += dstm_P*dstn_M*(tauxm_P**2 + tauym_P**2)/(1j*omega*epsilon0)*(intPM_real_R + 1j*intPM_imag_R)
+#                 Zmn_right[m-1,n]    += dstm_M*dstn_P*(tauxm_M**2 + tauym_M**2)/(1j*omega*epsilon0)*(intMP_real_R + 1j*intMP_imag_R)
     
 #     # Add the integrals together, and return them as the final Z matrix
 #     Zmn = Zmn_left + Zmn_right
     
-#    return Zmn #, Zmn_left_PP, Zmn_left_MM, Zmn_left_PM, Zmn_left_MP, Zmn_right_PP, Zmn_right_MM, Zmn_right_PM, Zmn_right_MP
+#     return Zmn, Zmn_left, Zmn_right #, Zmn_left_PP, Zmn_left_MM, Zmn_left_PM, Zmn_left_MP, Zmn_right_PP, Zmn_right_MM, Zmn_right_PM, Zmn_right_MP
 
 def Zmn_adj_calculator(coordinates, wavelength):
     M = len(coordinates)-1
@@ -493,6 +514,7 @@ def Zmn_adj_calculator(coordinates, wavelength):
     Zmn_adj = np.zeros((M,1), dtype=np.complex128)
     
     for m in range(M):
+        print(m)
         segment_m = Coordinates_to_segment(coordinates, m)
         if m == 0:
             segment_n = Coordinates_to_segment(coordinates, -2)
@@ -509,39 +531,69 @@ def Zmn_adj_calculator(coordinates, wavelength):
         green = lambda eta, ksi, segm, segn: 1/(2*pi)*kv(0, 1j*k0*D(eta, ksi, segm, segn))
         
         # ADJECENT
-        x, w = np.polynomial.legendre.leggauss(degree)
+        #x, w = np.polynomial.legendre.leggauss(degree)
         
-        integrant_PP = RT_plus(x)*RT_plus(x)*green(x, x, segment_m, segment_n)
-        integrant_MM = RT_min(x)*RT_min(x)*green(x, x, segment_m, segment_n)
+        #integrant_PP = RT_plus(x)*RT_plus(x)*green(x, x, segment_m, segment_n)
+        #integrant_MM = RT_min(x)*RT_min(x)*green(x, x, segment_m, segment_n)
         
-        integrant_PP_R = 0.25*green(x, x, segment_m, segment_n)
-        integrant_MM_R = 0.25*green(x, x, segment_m, segment_n)
+        #integrant_PP_R = 0.25*green(x, x, segment_m, segment_n)
+        #integrant_MM_R = 0.25*green(x, x, segment_m, segment_n)
         
-        I_PP = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(np.sum(w*w*integrant_PP))
-        I_MM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(np.sum(w*w*integrant_MM))
+        #I_PP = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(np.sum(w*w*integrant_PP))
+        #I_MM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(np.sum(w*w*integrant_MM))
         
-        I_PP_R = dst_m*dst_n/(1j*omega*epsilon0)*(np.sum(w*w*integrant_PP_R))
-        I_MM_R = dst_m*dst_n/(1j*omega*epsilon0)*(np.sum(w*w*integrant_MM_R))
+        #I_PP_R = dst_m*dst_n/(1j*omega*epsilon0)*(np.sum(w*w*integrant_PP_R))
+        #I_MM_R = dst_m*dst_n/(1j*omega*epsilon0)*(np.sum(w*w*integrant_MM_R))
         
         # SELF TERM
-        I_PM = (dst_m**2)*1j*omega*mu0*(1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst_m/2) + gamma_e)))
-        I_PM_R = (dst_m**2)*(1j*omega*epsilon0)*(-1/(8*pi)*(6 - 4*np.log(2) - 4*(np.log(1j*k0*dst_m/2) + gamma_e)))
+        #I_PM = (dst_m**2)*1j*omega*mu0*(1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst_m/2) + gamma_e)))
+        #I_PM_R = (dst_m**2)*(1j*omega*epsilon0)*(-1/(8*pi)*(6 - 4*np.log(2) - 4*(np.log(1j*k0*dst_m/2) + gamma_e)))
         
         # REGULAR
-        integrant_MP_real = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.real(green(x, x, segment_m, segment_n)) # Regular      
-        integrant_MP_imag = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.imag(green(x, x, segment_m, segment_n)) # Regular 
+        integrant_PM_real = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
+        integrant_PM_imag = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
+        integrant_MP_real = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
+        integrant_MP_imag = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
+        integrant_PP_real = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
+        integrant_PP_imag = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
+        integrant_MM_real = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
+        integrant_MM_imag = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
         
-        integrant_MP_R_real = lambda eta, ksi: -0.5*0.5*np.real(green(x, x, segment_m, segment_n)) # Regular 
-        integrant_MP_R_imag = lambda eta, ksi: -0.5*0.5*np.imag(green(x, x, segment_m, segment_n)) # Regular 
+        integrant_PM_R_real = lambda eta, ksi: 0.5*-0.5*np.real(green(eta, ksi, segment_m, segment_n))       
+        integrant_PM_R_imag = lambda eta, ksi: 0.5*-0.5*np.imag(green(eta, ksi, segment_m, segment_n))
+        integrant_MP_R_real = lambda eta, ksi: -0.5*0.5*np.real(green(eta, ksi, segment_m, segment_n))
+        integrant_MP_R_imag = lambda eta, ksi: -0.5*0.5*np.imag(green(eta, ksi, segment_m, segment_n)) 
+        integrant_PP_R_real = lambda eta, ksi: 0.5*0.5*np.real(green(eta, ksi, segment_m, segment_n))       
+        integrant_PP_R_imag = lambda eta, ksi: 0.5*0.5*np.imag(green(eta, ksi, segment_m, segment_n))
+        integrant_MM_R_real = lambda eta, ksi: -0.5*-0.5*np.real(green(eta, ksi, segment_m, segment_n))       
+        integrant_MM_R_imag = lambda eta, ksi: -0.5*-0.5*np.imag(green(eta, ksi, segment_m, segment_n))
         
+        I_PM_real = integrate.dblquad(integrant_PM_real, -1, 1, -1, 1)[0]
+        I_PM_imag = integrate.dblquad(integrant_PM_imag, -1, 1, -1, 1)[0]
         I_MP_real = integrate.dblquad(integrant_MP_real, -1, 1, -1, 1)[0]
         I_MP_imag = integrate.dblquad(integrant_MP_imag, -1, 1, -1, 1)[0]
+        I_PP_real = integrate.dblquad(integrant_PP_real, -1, 1, -1, 1)[0]
+        I_PP_imag = integrate.dblquad(integrant_PP_imag, -1, 1, -1, 1)[0]
+        I_MM_real = integrate.dblquad(integrant_MM_real, -1, 1, -1, 1)[0]
+        I_MM_imag = integrate.dblquad(integrant_MM_imag, -1, 1, -1, 1)[0]
         
+        I_PM_R_real = integrate.dblquad(integrant_PM_R_real, -1, 1, -1, 1)[0]
+        I_PM_R_imag = integrate.dblquad(integrant_PM_R_imag, -1, 1, -1, 1)[0]
         I_MP_R_real = integrate.dblquad(integrant_MP_R_real, -1, 1, -1, 1)[0]
         I_MP_R_imag = integrate.dblquad(integrant_MP_R_imag, -1, 1, -1, 1)[0]
+        I_PP_R_real = integrate.dblquad(integrant_PP_R_real, -1, 1, -1, 1)[0]
+        I_PP_R_imag = integrate.dblquad(integrant_PP_R_imag, -1, 1, -1, 1)[0]
+        I_MM_R_real = integrate.dblquad(integrant_MM_R_real, -1, 1, -1, 1)[0]
+        I_MM_R_imag = integrate.dblquad(integrant_MM_R_imag, -1, 1, -1, 1)[0]
         
+        I_PM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_PM_real + 1j*I_PM_imag)
+        I_PM_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_PM_R_real + 1j*I_PM_R_imag)
         I_MP = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_MP_real + 1j*I_MP_imag)
         I_MP_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_MP_R_real + 1j*I_MP_R_imag)
+        I_PP = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_PP_real + 1j*I_PP_imag)
+        I_PP_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_PP_R_real + 1j*I_PP_R_imag)
+        I_MM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_MM_real + 1j*I_MM_imag)
+        I_MM_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_MM_R_real + 1j*I_MM_R_imag)
         
         # ADD THEM UP
         Zmn_adj[m] = I_PP + I_MM + I_PM + I_MP + I_PP_R + I_MM_R + I_PM_R + I_MP_R 
@@ -745,10 +797,10 @@ Data = createcircle(M,R)
 #M = np.size(Data, 0)
 
 # # # # # ## MAIN
-#Zmn, Zmn_left, Zmn_right = Zmn_calculator_2x2matrix_method(Data, wavelength)
-#Zmn_left = Zmn_calculator_left(Data, wavelength)
-#Zmn_right = Zmn_calculator_right(Data, wavelength)
-# Zmn = Zmn_calculator(Data, wavelength)
+#Zmn_matrix, Zmn_left_matrix, Zmn_right_matrix = Zmn_calculator_2x2matrix_method(Data, wavelength)
+Zmn_left = Zmn_calculator_left(Data, wavelength)
+Zmn_right = Zmn_calculator_right_V2(Data, wavelength)
+#Zmn = Zmn_calculator(Data, wavelength)
 # #Z_diag_test = Zmn_diag_calculator(Data, wavelength)
 # Zmn_diag = Zmn_diag_calculator_V2(Data, wavelength)
 # # np.fill_diagonal(Zmn, Z_diag_test.flatten())

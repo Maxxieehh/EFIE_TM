@@ -53,7 +53,7 @@ wavelength = c/f
 
 ##------------------------Generate shape--------------------
 # Use the circle
-M = 10
+M = 30
 R = 1
 Data = createcircle(M,R)
 

@@ -250,7 +250,7 @@ def Zmn_calculator(coordinates, wavelength):
     # ])
 
 
-    return Zmn_mathematica_2
+    return Zmn
 
 def Zmn_calculator_left(coordinates, wavelength):
     M = len(coordinates)-1
@@ -712,10 +712,27 @@ def Zmn_adj_calculator(coordinates, wavelength):
         Zmn_adj[m] = I_PP + I_MM + I_PM + I_MP + I_PP_R + I_MM_R + I_PM_R + I_MP_R 
     return Zmn_adj
 
+def integrand(eta, ksi, wavelength, segment_m, segment_n):
+    # This function is used for the diagonal term, where it returns the integrand f-g used for 
+    # singeling out the singularity term
+    k0 = 2*pi/wavelength
+    gamma_e = 0.577215664901532860606512090082402431042159335
+    D = np.linalg.norm(np.subtract(rho(eta, segment_m), rho(ksi, segment_n)))
+    
+    if D < 1e-8:
+        # eta ~= xi, do taylor series then 
+        x = 1j*k0*D/2 # Extra divide by 2 added, as the 
+        log_approx = 2*(((x-1)/(x+1)) + (1/3)*((x-1)/(x+1))**3 + (1/5)*((x-1)/(x+1))**5 + (1/7)*((x-1)/(x+1))**7 + (1/9)*((x-1)/(x+1))**9 + (1/11)*((x-1)/(x+1))**11)
+        K0_approx = -(log_approx + gamma_e)*(1 + x**2/4) + x**2/4
+        return  0#1/(2*pi)*(K0_approx + log_approx + gamma_e)  
+    else:
+        return 1/(2*pi)*(kv(0, 1j*k0*D) + np.log(0.5*1j*k0*D) + gamma_e)
+
 def Zmn_diag_calculator(coordinates, wavelength):
     M = len(coordinates)-1
     k0 = 2*pi/wavelength
     mu0 = 4*pi*10**-7
+    epsilon0 = 8.854187812813e-12
     c = 299792458
     omega = 2*pi*c/wavelength
     gamma_e = 0.577215664901532860606512090082402431042159335 # Euler's constant
@@ -723,22 +740,81 @@ def Zmn_diag_calculator(coordinates, wavelength):
     # Define the diagonal of the Z matrix as an Mx1 array
     Zdiag = np.zeros((M,1), dtype=np.complex128)
     
-    for m in range(M):
-        segment_m = Coordinates_to_segment(coordinates, m)
-        dst = segment_length(segment_m)/2
+    m = 3 # Any value on the diagonal will give the same value, so m=3 is chosen arbitrarily
+    segment_m = Coordinates_to_segment(coordinates, m)
+    if m == 0:
+        segment_m_M = Coordinates_to_segment(coordinates, -2)
+    else:
+        segment_m_M = Coordinates_to_segment(coordinates, m-1)
         
-        # Definitions of the 4 different cases as described in the documentation, where
-        # +1 or -1 is added inside the brackets depending on the polarity of
-        # the eta*ksi term of the basis & test function combination
-        intPP = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-        intMM = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-        intPM = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-        intMP = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-        
-        # Add the 4 terms up using their common prefactor
-        Zdiag[m] = dst**2*1j*omega*mu0*(intPP + intMM + intPM + intMP)
+    dst = segment_length(segment_m)/2
+    dst_M = segment_length(segment_m_M)/2
     
-    return Zdiag
+    tau = Tangent_vector_coefficients(segment_m)
+    tau_M = Tangent_vector_coefficients(segment_m_M)
+    
+    # Definitions of the 4 different cases as described in the documentation, where
+    # +1 or -1 is added inside the brackets depending on the polarity of
+    # the eta*ksi term of the basis & test function combination
+    intPP = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
+    intMM = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
+    intPM = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
+    intMP = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
+    
+    # Add the 4 terms up using their common prefactor
+    g = dst**2*1j*omega*mu0*(intPP + intMM + intPM + intMP)
+    
+    integrant_PP_real = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+    integrant_PP_imag = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+    integrant_MM_real = lambda eta, ksi: RT_min(eta)*RT_min(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m))
+    integrant_MM_imag = lambda eta, ksi: RT_min(eta)*RT_min(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m))
+    integrant_PM_real = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+    integrant_PM_imag = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+    integrant_MP_real = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+    integrant_MP_imag = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+    
+    integrant_PP_R_real = lambda eta, ksi: 0.5*0.5*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+    integrant_PP_R_imag = lambda eta, ksi: 0.5*0.5*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+    integrant_MM_R_real = lambda eta, ksi: -0.5*-0.5*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m))
+    integrant_MM_R_imag = lambda eta, ksi: -0.5*-0.5*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m))
+    integrant_PM_R_real = lambda eta, ksi: 0.5*-0.5*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+    integrant_PM_R_imag = lambda eta, ksi: 0.5*-0.5*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+    integrant_MP_R_real = lambda eta, ksi: -0.5*0.5*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+    integrant_MP_R_imag = lambda eta, ksi: -0.5*0.5*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+    
+    I_PP_real = integrate.dblquad(integrant_PP_real, -1, 1, -1, 1)[0]
+    I_PP_imag = integrate.dblquad(integrant_PP_imag, -1, 1, -1, 1)[0]
+    I_MM_real = integrate.dblquad(integrant_MM_real, -1, 1, -1, 1)[0]
+    I_MM_imag = integrate.dblquad(integrant_MM_imag, -1, 1, -1, 1)[0]
+    I_PM_real = integrate.dblquad(integrant_PM_real, -1, 1, -1, 1)[0]
+    I_PM_imag = integrate.dblquad(integrant_PM_imag, -1, 1, -1, 1)[0]
+    I_MP_real = integrate.dblquad(integrant_MP_real, -1, 1, -1, 1)[0]
+    I_MP_imag = integrate.dblquad(integrant_MP_imag, -1, 1, -1, 1)[0]
+    
+    I_PP_R_real = integrate.dblquad(integrant_PP_R_real, -1, 1, -1, 1)[0]
+    I_PP_R_imag = integrate.dblquad(integrant_PP_R_imag, -1, 1, -1, 1)[0]
+    I_MM_R_real = integrate.dblquad(integrant_MM_R_real, -1, 1, -1, 1)[0]
+    I_MM_R_imag = integrate.dblquad(integrant_MM_R_imag, -1, 1, -1, 1)[0]
+    I_PM_R_real = integrate.dblquad(integrant_PM_R_real, -1, 1, -1, 1)[0]
+    I_PM_R_imag = integrate.dblquad(integrant_PM_R_imag, -1, 1, -1, 1)[0]
+    I_MP_R_real = integrate.dblquad(integrant_MP_R_real, -1, 1, -1, 1)[0]
+    I_MP_R_imag = integrate.dblquad(integrant_MP_R_imag, -1, 1, -1, 1)[0]
+    
+    I_PP = dst_M*dst_M*1j*omega*mu0*(tau_M[0]*tau_M[0] + tau_M[1]*tau_M[1])*(I_PP_real + 1j*I_PP_imag)
+    I_PP_R = dst_M*dst_M/(1j*omega*epsilon0)*(I_PP_R_real + 1j*I_PP_R_imag)
+    
+    I_MM = dst*dst*1j*omega*mu0*(tau[0]*tau[0] + tau[1]*tau[1])*(I_MM_real + 1j*I_MM_imag)
+    I_MM_R = dst_M*dst_M/(1j*omega*epsilon0)*(I_MM_R_real + 1j*I_MM_R_imag)
+    
+    I_PM = dst_M*dst*1j*omega*mu0*(tau_M[0]*tau[0] + tau_M[1]*tau[1])*(I_PM_real + 1j*I_PM_imag)
+    I_PM_R = dst_M*dst/(1j*omega*epsilon0)*(I_PM_R_real + 1j*I_PM_R_imag)
+    
+    I_MP = dst*dst_M*1j*omega*mu0*(tau[0]*tau_M[0] + tau[1]*tau_M[1])*(I_MP_real + 1j*I_MP_imag)
+    I_MP_R = dst*dst_M/(1j*omega*epsilon0)*(I_MP_R_real + 1j*I_MP_R_imag)
+    
+    f_g = I_PP + I_PP_R + I_MM + I_MM_R + I_PM + I_PM_R + I_MP + I_MP_R
+    
+    return g, f_g
     
 
 def Zmn_diag_calculator_appendix(coordinates, wavelength):
@@ -896,15 +972,15 @@ def greenEsc(r,ksi,segment,wavelength):
 # UNCOMMENT THIS PART TO TEST FUNCTIONS SEPARATELY!
 ## INPUTS
 # angle = 1.05*pi/2
-#c = 299792458
-#f = 150*10**6
+c = 299792458
+f = 150*10**6
 # mu0 = 4*pi*10**-7
-#wavelength = c/f
+wavelength = c/f
 
 # # # # Generate a closed circle of radius 1 with 30 data points
-#M = 30
-#R = 1
-#Data = createcircle(M,R)
+M = 30
+R = 1
+Data = createcircle(M,R)
 #Data = np.asarray([[4,1],[3.7,1],[3,1],[2.3,1],[1,1],[0.5,1],[0,1],[-0.5,1],[-1,1],[-2,1],[-3,1],[-3.5,1],[-5,1]])
 #M = np.size(Data, 0)
 
@@ -921,6 +997,7 @@ def greenEsc(r,ksi,segment,wavelength):
 # # # # # print(Z_diag_test)  
 #Zmn_adj = Zmn_adj_calculator(Data, wavelength)
 #Zmn_matrix_method = Zmn_calculator_2x2matrix_method(Data, wavelength)
+g, f_g = Zmn_diag_calculator(Data, wavelength)
 
 
 

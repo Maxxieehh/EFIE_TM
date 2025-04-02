@@ -13,6 +13,38 @@ from numpy import sin ,cos, pi, sqrt, exp
 from scipy import integrate
 from scipy.special import kv, psi, factorial
 
+Zmn_mathematica_2 = np.asarray([
+      [13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j],
+      [11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j],
+      [7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990298j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j],
+      [2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j],
+      [-0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990298j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j],
+      [-1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966427-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990298j, -1.34711-0.482235j],
+      [-1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j],
+      [-0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j],
+      [0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j],
+      [0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j],
+      [-0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j],
+      [-0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990298j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j],
+      [-1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j],
+      [-2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j],
+      [-2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j],
+      [-2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j],
+      [-2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j],
+      [-1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j],
+      [-0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990298j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j],
+      [-0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j],
+      [0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j],
+      [0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j],
+      [-0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j],
+      [-1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j],
+      [-1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990298j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966427-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j],
+      [-0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990298j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j],
+      [2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j],
+      [7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990298j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j],
+      [11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j]
+])
+
 def createcircle(M,R):
     # generate circle with radius R with M samples
     Arg = np.linspace(0,2*pi,M)
@@ -629,6 +661,10 @@ def Zmn_calculator_right(coordinates, wavelength):
 #     return Zmn_adj
 
 def Zmn_adj_calculator(coordinates, wavelength):
+    # This function divides the segments into 3 distinct cases: one point, full segment, and no overlap.
+    # One point overlap uses Gauss Legendre
+    # Full segment overlap uses the self-term definition
+    #
     M = len(coordinates)-1
     k0 = 2*pi/wavelength
     mu0 = 4*pi*10**-7
@@ -669,7 +705,7 @@ def Zmn_adj_calculator(coordinates, wavelength):
         D = lambda eta, ksi, segm, segn: np.linalg.norm(np.subtract(rho(eta, segm), rho(ksi, segn)))
         green = lambda eta, ksi, segm, segn: 1/(2*pi)*kv(0, 1j*k0*D(eta, ksi, segm, segn))
         
-        # ADJECENT
+        # ONE POINT OVERLAP
         xh, wh = np.polynomial.legendre.leggauss(degree)
         xj = xh
         wj = wh
@@ -677,10 +713,10 @@ def Zmn_adj_calculator(coordinates, wavelength):
         integrant_MM, integrant_MM_R = 0, 0
         for h in range(degree):
             for j in range(degree):
-                integrant_PP += wh[h]*wj[j]*RT_plus(xh[h])*RT_plus(xj[j])*green(xh[h], xj[j], segment_m_M, segment_n_M)
-                integrant_MM += wh[h]*wj[j]*RT_min(xh[h])*RT_min(xj[j])*green(xh[h], xj[j], segment_m, segment_n)
-                integrant_PP_R += wh[h]*wj[j]*0.25*green(xh[h], xj[j], segment_m_M, segment_n_M)
-                integrant_MM_R += wh[h]*wj[j]*0.25*green(xh[h], xj[j], segment_m, segment_n)
+                integrant_PP    += wh[h]*wj[j]*RT_plus(xh[h])*RT_plus(xj[j])*green(xh[h], xj[j], segment_m_M, segment_n_M)
+                integrant_MM    += wh[h]*wj[j]*RT_min(xh[h])*RT_min(xj[j])*green(xh[h], xj[j], segment_m, segment_n)
+                integrant_PP_R  += wh[h]*wj[j]*0.25*green(xh[h], xj[j], segment_m_M, segment_n_M)
+                integrant_MM_R  += wh[h]*wj[j]*0.25*green(xh[h], xj[j], segment_m, segment_n)
         
         I_PP = dst_m_M*dst_n_M*1j*omega*mu0*(tau_m_M[0]*tau_n_M[0] + tau_m_M[1]*tau_n_M[1])*integrant_PP
         I_MM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*integrant_PP_R
@@ -688,11 +724,27 @@ def Zmn_adj_calculator(coordinates, wavelength):
         I_PP_R = dst_m_M*dst_n_M/(1j*omega*epsilon0)*integrant_MM
         I_MM_R = dst_m*dst_n/(1j*omega*epsilon0)*integrant_MM_R
         
-        # SELF TERM
-        I_PM = (dst_n**2)*1j*omega*mu0*(1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst_n/2) + gamma_e)))
-        I_PM_R = (dst_n**2)*(1j*omega*epsilon0)*(-1/(8*pi)*(6 - 4*np.log(2) - 4*(np.log(1j*k0*dst_n/2) + gamma_e)))
+        # FULL SEGMENT OVERLAP
+        # subscript g is the singular part, and subscript f_g is the numerically solvable part
+        I_PM_g = (dst_m_M*dst_n)*1j*omega*mu0*(1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst_n/2) + gamma_e))) # 5 used because PMhas basis functions 0.25(1+eta)(1-xi)=0.25(1+eta+xi-etaxi), so -1
+        I_PM_R_g = (dst_m_M*dst_n)*(1j*omega*epsilon0)*(-1/(8*pi)*(6 - 4*np.log(2) - 4*(np.log(1j*k0*dst_n/2) + gamma_e))) # -1/(8pi) used because basis functions 0.5*-0.5=-0.25 
         
-        # REGULAR
+        integrant_PM_real = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        integrant_PM_imag = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        integrant_PM_R_real = lambda eta, ksi: 0.5*-0.5*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        integrant_PM_R_imag = lambda eta, ksi: 0.5*-0.5*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        
+        I_PM_real = integrate.dblquad(integrant_PM_real, -1, 1, -1, 1)[0]
+        I_PM_imag = integrate.dblquad(integrant_PM_imag, -1, 1, -1, 1)[0]
+        I_PM_R_real = integrate.dblquad(integrant_PM_R_real, -1, 1, -1, 1)[0]
+        I_PM_R_imag = integrate.dblquad(integrant_PM_R_imag, -1, 1, -1, 1)[0]
+        
+        I_PM_f_g = dst_m_M*dst_n*1j*omega*mu0*(tau_m_M[0]*tau_n[0] + tau_m_M[1]*tau_n[1])*(I_PM_real + 1j*I_PM_imag)
+        I_PM_R_f_g = dst_m_M*dst_n/(1j*omega*epsilon0)*(I_PM_R_real + 1j*I_PM_R_imag)
+        
+        I_PM, I_PM_R = I_PM_f_g + I_PM_g, I_PM_R_f_g + I_PM_R_g
+        
+        # NO SEGMENT OVERLAP
         integrant_MP_real = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.real(green(eta, ksi, segment_m, segment_n_M))       
         integrant_MP_imag = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.imag(green(eta, ksi, segment_m, segment_n_M))
         
@@ -712,21 +764,31 @@ def Zmn_adj_calculator(coordinates, wavelength):
         Zmn_adj[m] = I_PP + I_MM + I_PM + I_MP + I_PP_R + I_MM_R + I_PM_R + I_MP_R 
     return Zmn_adj
 
+def ln_approx(x, N):
+    u = 1 - x
+    n = np.arange(1, N + 1)  # Create an array [1, 2, ..., N]
+    terms = (pow(u, n)) / n     # Compute all terms at once using NumPy broadcasting
+    
+    return -np.sum(terms)  # Sum the terms in a highly optimized way
+
 def integrand(eta, ksi, wavelength, segment_m, segment_n):
     # This function is used for the diagonal term, where it returns the integrand f-g used for 
     # singeling out the singularity term
     k0 = 2*pi/wavelength
     gamma_e = 0.577215664901532860606512090082402431042159335
     D = np.linalg.norm(np.subtract(rho(eta, segment_m), rho(ksi, segment_n)))
+    dst = segment_length(segment_m)/2
     
-    if D < 1e-8:
-        # eta ~= xi, do taylor series then 
-        x = 1j*k0*D/2 # Extra divide by 2 added, as the 
-        log_approx = 2*(((x-1)/(x+1)) + (1/3)*((x-1)/(x+1))**3 + (1/5)*((x-1)/(x+1))**5 + (1/7)*((x-1)/(x+1))**7 + (1/9)*((x-1)/(x+1))**9 + (1/11)*((x-1)/(x+1))**11)
-        K0_approx = -(log_approx + gamma_e)*(1 + x**2/4) + x**2/4
-        return  0#1/(2*pi)*(K0_approx + log_approx + gamma_e)  
+    order = 1000
+    
+    if abs(eta - ksi) < 1e-10:
+        # eta ~= xi, do taylor series then  
+        #log_approx = lambda x: 2*(((x-1)/(x+1)) + (1/3)*((x-1)/(x+1))**3 + (1/5)*((x-1)/(x+1))**5 + (1/7)*((x-1)/(x+1))**7 + (1/9)*((x-1)/(x+1))**9 + (1/11)*((x-1)/(x+1))**11 + (1/13)*((x-1)/(x+1))**13)
+        K0_approx = lambda x: -(ln_approx(x/2, order) + gamma_e)*(1 + (x**2)/4) + (x**2)/4
+        
+        return  1/(2*pi)*(K0_approx(1j*k0*D/2) - (-ln_approx(1j*k0*D/2, order) - gamma_e - ln_approx(abs(eta - ksi), order)))  
     else:
-        return 1/(2*pi)*(kv(0, 1j*k0*D) + np.log(0.5*1j*k0*D) + gamma_e)
+        return 1/(2*pi)*(kv(0, 1j*k0*dst*abs(eta - ksi)) - (-np.log(0.5*1j*k0*D) - gamma_e - np.log(abs(eta - ksi))))
 
 def Zmn_diag_calculator(coordinates, wavelength):
     M = len(coordinates)-1
@@ -739,82 +801,88 @@ def Zmn_diag_calculator(coordinates, wavelength):
     
     # Define the diagonal of the Z matrix as an Mx1 array
     Zdiag = np.zeros((M,1), dtype=np.complex128)
+    f_g = np.zeros((M,1), dtype=np.complex128)
+    g = np.zeros((M,1), dtype=np.complex128)
     
-    m = 3 # Any value on the diagonal will give the same value, so m=3 is chosen arbitrarily
-    segment_m = Coordinates_to_segment(coordinates, m)
-    if m == 0:
-        segment_m_M = Coordinates_to_segment(coordinates, -2)
-    else:
-        segment_m_M = Coordinates_to_segment(coordinates, m-1)
+    for m in range(M):
+        segment_m = Coordinates_to_segment(coordinates, m)
+        if m == 0:
+            segment_m_M = Coordinates_to_segment(coordinates, -2)
+        else:
+            segment_m_M = Coordinates_to_segment(coordinates, m-1)
+            
+        dst = segment_length(segment_m)/2
+        dst_M = segment_length(segment_m_M)/2
         
-    dst = segment_length(segment_m)/2
-    dst_M = segment_length(segment_m_M)/2
+        tau = Tangent_vector_coefficients(segment_m)
+        tau_M = Tangent_vector_coefficients(segment_m_M)
+        
+        # Definitions of the 4 different cases as described in the documentation, where
+        # +1 or -1 is added inside the brackets depending on the polarity of
+        # the eta*ksi term of the basis & test function combination
+        intPP = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst_M/2) + gamma_e))
+        intMM = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
+        intPM = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst_M/2) + gamma_e))
+        intMP = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
+        
+        # Add the 4 terms up using their common prefactor
+        g[m] = dst*dst_M*1j*omega*mu0*(intPP + intMM + intPM + intMP)
+        
+        # Calculate the f-g term of the Z-matrix, by using the general method of calculation, but now by 
+        # subtracting the singularity from the K0 function to be able to calculate the value.
+        integrant_PP_real = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+        integrant_PP_imag = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+        integrant_MM_real = lambda eta, ksi: RT_min(eta)*RT_min(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m))
+        integrant_MM_imag = lambda eta, ksi: RT_min(eta)*RT_min(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m))
+        integrant_PM_real = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        integrant_PM_imag = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        integrant_MP_real = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+        integrant_MP_imag = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+        
+        integrant_PP_R_real = lambda eta, ksi: 0.5*0.5*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+        integrant_PP_R_imag = lambda eta, ksi: 0.5*0.5*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
+        integrant_MM_R_real = lambda eta, ksi: -0.5*-0.5*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m))
+        integrant_MM_R_imag = lambda eta, ksi: -0.5*-0.5*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m))
+        integrant_PM_R_real = lambda eta, ksi: 0.5*-0.5*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        integrant_PM_R_imag = lambda eta, ksi: 0.5*-0.5*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
+        integrant_MP_R_real = lambda eta, ksi: -0.5*0.5*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+        integrant_MP_R_imag = lambda eta, ksi: -0.5*0.5*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
+        
+        I_PP_real = integrate.dblquad(integrant_PP_real, -1, 1, -1, 1)[0]
+        I_PP_imag = integrate.dblquad(integrant_PP_imag, -1, 1, -1, 1)[0]
+        I_MM_real = integrate.dblquad(integrant_MM_real, -1, 1, -1, 1)[0]
+        I_MM_imag = integrate.dblquad(integrant_MM_imag, -1, 1, -1, 1)[0]
+        I_PM_real = integrate.dblquad(integrant_PM_real, -1, 1, -1, 1)[0]
+        I_PM_imag = integrate.dblquad(integrant_PM_imag, -1, 1, -1, 1)[0]
+        I_MP_real = integrate.dblquad(integrant_MP_real, -1, 1, -1, 1)[0]
+        I_MP_imag = integrate.dblquad(integrant_MP_imag, -1, 1, -1, 1)[0]
+        
+        I_PP_R_real = integrate.dblquad(integrant_PP_R_real, -1, 1, -1, 1)[0]
+        I_PP_R_imag = integrate.dblquad(integrant_PP_R_imag, -1, 1, -1, 1)[0]
+        I_MM_R_real = integrate.dblquad(integrant_MM_R_real, -1, 1, -1, 1)[0]
+        I_MM_R_imag = integrate.dblquad(integrant_MM_R_imag, -1, 1, -1, 1)[0]
+        I_PM_R_real = integrate.dblquad(integrant_PM_R_real, -1, 1, -1, 1)[0]
+        I_PM_R_imag = integrate.dblquad(integrant_PM_R_imag, -1, 1, -1, 1)[0]
+        I_MP_R_real = integrate.dblquad(integrant_MP_R_real, -1, 1, -1, 1)[0]
+        I_MP_R_imag = integrate.dblquad(integrant_MP_R_imag, -1, 1, -1, 1)[0]
+        
+        I_PP = dst_M*dst_M*1j*omega*mu0*(tau_M[0]*tau_M[0] + tau_M[1]*tau_M[1])*(I_PP_real + 1j*I_PP_imag)
+        I_PP_R = dst_M*dst_M/(1j*omega*epsilon0)*(I_PP_R_real + 1j*I_PP_R_imag)
+        
+        I_MM = dst*dst*1j*omega*mu0*(tau[0]*tau[0] + tau[1]*tau[1])*(I_MM_real + 1j*I_MM_imag)
+        I_MM_R = dst_M*dst_M/(1j*omega*epsilon0)*(I_MM_R_real + 1j*I_MM_R_imag)
+        
+        I_PM = dst_M*dst*1j*omega*mu0*(tau_M[0]*tau[0] + tau_M[1]*tau[1])*(I_PM_real + 1j*I_PM_imag)
+        I_PM_R = dst_M*dst/(1j*omega*epsilon0)*(I_PM_R_real + 1j*I_PM_R_imag)
+        
+        I_MP = dst*dst_M*1j*omega*mu0*(tau[0]*tau_M[0] + tau[1]*tau_M[1])*(I_MP_real + 1j*I_MP_imag)
+        I_MP_R = dst*dst_M/(1j*omega*epsilon0)*(I_MP_R_real + 1j*I_MP_R_imag)
+        
+        f_g[m] = I_PP + I_PP_R + I_MM + I_MM_R + I_PM + I_PM_R + I_MP + I_MP_R
+        
+        Zdiag[m] = f_g[m] + g[m]
     
-    tau = Tangent_vector_coefficients(segment_m)
-    tau_M = Tangent_vector_coefficients(segment_m_M)
-    
-    # Definitions of the 4 different cases as described in the documentation, where
-    # +1 or -1 is added inside the brackets depending on the polarity of
-    # the eta*ksi term of the basis & test function combination
-    intPP = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-    intMM = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-    intPM = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-    intMP = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst/2) + gamma_e))
-    
-    # Add the 4 terms up using their common prefactor
-    g = dst**2*1j*omega*mu0*(intPP + intMM + intPM + intMP)
-    
-    integrant_PP_real = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
-    integrant_PP_imag = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
-    integrant_MM_real = lambda eta, ksi: RT_min(eta)*RT_min(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m))
-    integrant_MM_imag = lambda eta, ksi: RT_min(eta)*RT_min(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m))
-    integrant_PM_real = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
-    integrant_PM_imag = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
-    integrant_MP_real = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
-    integrant_MP_imag = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
-    
-    integrant_PP_R_real = lambda eta, ksi: 0.5*0.5*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
-    integrant_PP_R_imag = lambda eta, ksi: 0.5*0.5*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m_M))
-    integrant_MM_R_real = lambda eta, ksi: -0.5*-0.5*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m))
-    integrant_MM_R_imag = lambda eta, ksi: -0.5*-0.5*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m))
-    integrant_PM_R_real = lambda eta, ksi: 0.5*-0.5*np.real(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
-    integrant_PM_R_imag = lambda eta, ksi: 0.5*-0.5*np.imag(integrand(eta, ksi, wavelength, segment_m_M, segment_m))
-    integrant_MP_R_real = lambda eta, ksi: -0.5*0.5*np.real(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
-    integrant_MP_R_imag = lambda eta, ksi: -0.5*0.5*np.imag(integrand(eta, ksi, wavelength, segment_m, segment_m_M))
-    
-    I_PP_real = integrate.dblquad(integrant_PP_real, -1, 1, -1, 1)[0]
-    I_PP_imag = integrate.dblquad(integrant_PP_imag, -1, 1, -1, 1)[0]
-    I_MM_real = integrate.dblquad(integrant_MM_real, -1, 1, -1, 1)[0]
-    I_MM_imag = integrate.dblquad(integrant_MM_imag, -1, 1, -1, 1)[0]
-    I_PM_real = integrate.dblquad(integrant_PM_real, -1, 1, -1, 1)[0]
-    I_PM_imag = integrate.dblquad(integrant_PM_imag, -1, 1, -1, 1)[0]
-    I_MP_real = integrate.dblquad(integrant_MP_real, -1, 1, -1, 1)[0]
-    I_MP_imag = integrate.dblquad(integrant_MP_imag, -1, 1, -1, 1)[0]
-    
-    I_PP_R_real = integrate.dblquad(integrant_PP_R_real, -1, 1, -1, 1)[0]
-    I_PP_R_imag = integrate.dblquad(integrant_PP_R_imag, -1, 1, -1, 1)[0]
-    I_MM_R_real = integrate.dblquad(integrant_MM_R_real, -1, 1, -1, 1)[0]
-    I_MM_R_imag = integrate.dblquad(integrant_MM_R_imag, -1, 1, -1, 1)[0]
-    I_PM_R_real = integrate.dblquad(integrant_PM_R_real, -1, 1, -1, 1)[0]
-    I_PM_R_imag = integrate.dblquad(integrant_PM_R_imag, -1, 1, -1, 1)[0]
-    I_MP_R_real = integrate.dblquad(integrant_MP_R_real, -1, 1, -1, 1)[0]
-    I_MP_R_imag = integrate.dblquad(integrant_MP_R_imag, -1, 1, -1, 1)[0]
-    
-    I_PP = dst_M*dst_M*1j*omega*mu0*(tau_M[0]*tau_M[0] + tau_M[1]*tau_M[1])*(I_PP_real + 1j*I_PP_imag)
-    I_PP_R = dst_M*dst_M/(1j*omega*epsilon0)*(I_PP_R_real + 1j*I_PP_R_imag)
-    
-    I_MM = dst*dst*1j*omega*mu0*(tau[0]*tau[0] + tau[1]*tau[1])*(I_MM_real + 1j*I_MM_imag)
-    I_MM_R = dst_M*dst_M/(1j*omega*epsilon0)*(I_MM_R_real + 1j*I_MM_R_imag)
-    
-    I_PM = dst_M*dst*1j*omega*mu0*(tau_M[0]*tau[0] + tau_M[1]*tau[1])*(I_PM_real + 1j*I_PM_imag)
-    I_PM_R = dst_M*dst/(1j*omega*epsilon0)*(I_PM_R_real + 1j*I_PM_R_imag)
-    
-    I_MP = dst*dst_M*1j*omega*mu0*(tau[0]*tau_M[0] + tau[1]*tau_M[1])*(I_MP_real + 1j*I_MP_imag)
-    I_MP_R = dst*dst_M/(1j*omega*epsilon0)*(I_MP_R_real + 1j*I_MP_R_imag)
-    
-    f_g = I_PP + I_PP_R + I_MM + I_MM_R + I_PM + I_PM_R + I_MP + I_MP_R
-    
-    return g, f_g
+    return Zdiag#, g, f_g
     
 
 def Zmn_diag_calculator_appendix(coordinates, wavelength):
@@ -989,7 +1057,7 @@ Data = createcircle(M,R)
 #Zmn_left = Zmn_calculator_left(Data, wavelength)
 #Zmn_right = Zmn_calculator_right(Data, wavelength)
 #Zmn = Zmn_left + Zmn_right
-#Zmn = Zmn_calculator(Data, wavelength)
+Zmn = Zmn_calculator(Data, wavelength)
 # #Z_diag_test = Zmn_diag_calculator(Data, wavelength)
 #Zmn_diag_V2 = Zmn_diag_calculator_V2(Data, wavelength)
 #Zmn_diag = Zmn_diag_calculator(Data, wavelength)
@@ -997,7 +1065,10 @@ Data = createcircle(M,R)
 # # # # # print(Z_diag_test)  
 #Zmn_adj = Zmn_adj_calculator(Data, wavelength)
 #Zmn_matrix_method = Zmn_calculator_2x2matrix_method(Data, wavelength)
-g, f_g = Zmn_diag_calculator(Data, wavelength)
+#Zmn_diag, g, f_g = Zmn_diag_calculator(Data, wavelength)
+
+# ERROR CALCULATIONS
+error_Zmatrix = np.abs(Zmn - Zmn_mathematica_2)
 
 
 

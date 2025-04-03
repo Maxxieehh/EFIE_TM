@@ -107,6 +107,7 @@ output = tm.EFIE_TM(boundary_points,wavelength,angle)
 Jz_x = output[0]
 Jz_y = output[1]
 Z = output[4]
+Z_ref = output[5]
 end = time.time()
 time_main = end-start
 
@@ -143,6 +144,9 @@ simparams = {
 }
 # uncomment for circle analytical solutions!
 Ex,Ey,Hz,Hiz = TMcil.Analytical_2D_TM(simparams)
+
+##--------Calculate the error between mathematica and Python-------------------
+Z_matrix_error = np.abs((Z - Z_ref)/Z_ref)*100
 
 ##-----------------Error calculations over grid-----------------------
 # calculate error w.r.t. circular analytical solution

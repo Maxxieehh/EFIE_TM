@@ -170,54 +170,23 @@ def rho(t, segment):
 
 def Zmn_calculator(coordinates, wavelength):
     M = len(coordinates)-1
-    # Zmn_left = Zmn_calculator_left(coordinates, wavelength)
-    # Zmn_right = Zmn_calculator_right(coordinates, wavelength)
-    # Zmn = Zmn_left + Zmn_right
+    Zmn_left = Zmn_calculator_left(coordinates, wavelength)
+    Zmn_right = Zmn_calculator_right(coordinates, wavelength)
+    Zmn = Zmn_left + Zmn_right
     
-    # # Add the diagonal to the Z matrix
-    # Zmn_diag = Zmn_diag_calculator(coordinates, wavelength)
-    # np.fill_diagonal(Zmn, Zmn_diag.flatten())
+    # Add the diagonal to the Z matrix
+    Zmn_diag = Zmn_diag_calculator(coordinates, wavelength)
+    np.fill_diagonal(Zmn, Zmn_diag.flatten())
     
-    # # Add the super and sub diagonal to the matrix
-    # Zmn_adj = Zmn_adj_calculator(coordinates, wavelength)
-    # np.fill_diagonal(Zmn[1:], Zmn_adj.flatten()) # sub
-    # np.fill_diagonal(Zmn[:,1:], Zmn_adj.flatten()) # super
-    # Zmn[0,M-1] = Zmn[0,1]
-    # Zmn[M-1,0] = Zmn[0,1]
+    # Add the super and sub diagonal to the matrix
+    Zmn_adj = Zmn_adj_calculator(coordinates, wavelength)
+    np.fill_diagonal(Zmn[1:], Zmn_adj.flatten()) # sub
+    np.fill_diagonal(Zmn[:,1:], Zmn_adj.flatten()) # super
+    Zmn[0,M-1] = Zmn[0,1]
+    Zmn[M-1,0] = Zmn[0,1]
     
-    # Uncomment this if you want to use the matrix provided by Mathematica
-    # Zmn_mathematica = np.asarray([
-    #       [13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j],
-    #       [11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j],
-    #       [7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j],
-    #       [2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89574j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j],
-    #       [-0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j],
-    #       [-2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j],
-    #       [-1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j],
-    #       [-0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j],
-    #       [0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89574j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j],
-    #       [0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.094699j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.016767-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j],
-    #       [-0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j],
-    #       [-0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j],
-    #       [-1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.094699j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j],
-    #       [-2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j],
-    #       [-2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j],
-    #       [-2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j],
-    #       [-2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.094699j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j],
-    #       [-1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j],
-    #       [-0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j],
-    #       [-0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.016767-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.094699j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j],
-    #       [0.599296 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89574j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j],
-    #       [0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j],
-    #       [-0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j],
-    #       [-1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j],
-    #       [-2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952687-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j],
-    #       [-0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89574j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j],
-    #       [2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j, 7.40115 -3.57578j],
-    #       [7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946988j, 0.552411 -0.583402j, 0.599297 -1.66701j, -0.0167671-2.60958j, -0.952688-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599296 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946989j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j, 11.8056 +3.93983j],
-    #       [11.8056 +3.93983j, 7.40115 -3.57578j, 2.50505 -5.40834j, -0.9013-4.15369j, -2.04578-1.89573j, -1.45371-0.263049j, -0.265374+0.0946989j, 0.552411 -0.583402j, 0.599296 -1.66701j, -0.0167671-2.60958j, -0.952687-3.16288j, -1.87388-3.3495j, -2.56453-3.32857j, -2.92528-3.2682j, -2.92528-3.2682j, -2.56453-3.32857j, -1.87388-3.3495j, -0.952688-3.16288j, -0.0167671-2.60958j, 0.599297 -1.66701j, 0.552411 -0.583402j, -0.265374+0.0946988j, -1.45371-0.263049j, -2.04578-1.89573j, -0.9013-4.15369j, 2.50505 -5.40834j, 7.40115 -3.57578j, 11.8056 +3.93983j, 13.5812 +17.2948j]
-    #     ])
-    Zmn_mathematica_2 = np.asarray([
+    # Matrix provided by Mathematica
+    Zmn_ref = np.asarray([
           [13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j, 11.454 +5.15144j],
           [11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990299j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j, 7.34782 -2.90897j],
           [7.34782 -2.90897j, 11.454 +5.15144j, 13.1017 +13.3253j, 11.454 +5.15144j, 7.34782 -2.90897j, 2.73285 -5.00781j, -0.558095-4.03342j, -1.77252-2.01069j, -1.34711-0.482235j, -0.311666-0.0990299j, 0.429282 -0.684847j, 0.476103 -1.6766j, -0.0966428-2.56387j, -0.980797-3.10127j, -1.86173-3.29645j, -2.52852-3.2912j, -2.879-3.24149j, -2.879-3.24149j, -2.52852-3.2912j, -1.86173-3.29645j, -0.980797-3.10127j, -0.0966428-2.56387j, 0.476103 -1.6766j, 0.429282 -0.684847j, -0.311666-0.0990298j, -1.34711-0.482235j, -1.77252-2.01069j, -0.558095-4.03342j, 2.73285 -5.00781j],
@@ -250,7 +219,7 @@ def Zmn_calculator(coordinates, wavelength):
     ])
 
 
-    return Zmn_mathematica_2, Zmn_mathematica_2
+    return Zmn, Zmn_ref
 
 def Zmn_calculator_left(coordinates, wavelength):
     M = len(coordinates)-1
@@ -367,11 +336,6 @@ def Zmn_calculator_right(coordinates, wavelength):
             dst_n = segment_length(segment_n)/2
             dst_n_M = segment_length(segment_n_M)/2
             
-            tau_m = Tangent_vector_coefficients(segment_m)
-            tau_m_M = Tangent_vector_coefficients(segment_m_M)
-            #tau_n = Tangent_vector_coefficients(segment_n)
-            #tau_n_M = Tangent_vector_coefficients(segment_n_M)
-            
             D = lambda eta, ksi, segm, segn: np.linalg.norm(np.subtract(rho(eta, segm), rho(ksi, segn)))
             green = lambda eta, ksi, segm, segn: 1/(2*pi)*kv(0, 1j*k0*D(eta, ksi, segm, segn))
             
@@ -409,240 +373,6 @@ def Zmn_calculator_right(coordinates, wavelength):
             Zmn_right[m,n] = I_PP + I_MM + I_PM + I_MP
             
     return Zmn_right
-
-# def Zmn_calculator_2x2matrix_method(coordinates, wavelength):
-#     # Function to calculate the general terms of the Z matrix (non-tridiagonal).
-#     # It uses the 2x2 sub-matrix method as described in the documentation.
-#     # This can be seen by the += term in the definition of the different positions
-#     # in each loop.
-    
-#     M = len(coordinates)-1
-#     k0 = 2*pi/wavelength
-#     mu0 = 4*pi*10**-7
-#     epsilon0 = 8.854187812813e-12
-#     c = 299792458
-#     omega = 2*pi*c/wavelength
-#     gamma_e = 0.577215664901532860606512090082402431042159335
-    
-#     # Predefine the sizes of the output matrices
-#     Zmn_left = np.zeros((M,M), dtype=np.complex128)
-#     Zmn_right = np.zeros((M,M), dtype=np.complex128)
-#     Zmn_diag = np.zeros((M,1), dtype=np.complex128)
-    
-#     for n in np.arange(M):
-#         print(n) # Used as a check to see how far along we are
-#         for m in np.arange(M):
-#             # Calculate the segment for both m & n. For all following variables,
-#             # _P refers to the m/n case (plus), and _M refers to the m-1/n-1 case (min)
-#             segm_P = Coordinates_to_segment(coordinates, m)
-#             segn_P = Coordinates_to_segment(coordinates, n)
-            
-#             # Also calculate the previous segment, where we need to take note of
-#             # the -1th segment, which shifts over one (in closed)
-#             # This is used for the calculation of the m-1 and n-1 terms
-            
-#             # TODO: ADD OPEN CASE ASWELL!!
-#             if m == 0:
-#                 segm_M = Coordinates_to_segment(coordinates, -2)
-#             else:
-#                 segm_M = Coordinates_to_segment(coordinates, m-1)
-            
-#             if n == 0:
-#                 segn_M = Coordinates_to_segment(coordinates, -2)
-#             else:
-#                 segn_M = Coordinates_to_segment(coordinates, n-1)
-#             # Define the segment lengths for both cases
-#             dstm_P = segment_length(segm_P)/2
-#             dstn_P = segment_length(segn_P)/2
-            
-#             dstm_M = segment_length(segm_M)/2
-#             dstn_M = segment_length(segn_M)/2
-            
-#             # Create a function which calculates the norm inside of the Modified Bessel Function
-#             dstrho = lambda eta, ksi, segm, segn: np.linalg.norm(np.subtract(rho(eta, segm), rho(ksi, segn)))
-            
-#             # Define the tangential unit vector components
-#             tauxm_P, tauym_P = Tangent_vector_coefficients(segm_P)
-#             tauxn_P, tauyn_P = Tangent_vector_coefficients(segn_P)
-            
-#             tauxm_M, tauym_M = Tangent_vector_coefficients(segm_M)
-#             tauxn_M, tauyn_M = Tangent_vector_coefficients(segn_M)
-            
-#             # Calculate the 4 integrants, both for the real and imaginary part
-#             integrantPP_real = lambda eta, ksi: 0.5*(1 + eta)*0.5*(1 + ksi)*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_P)))
-#             integrantPP_imag = lambda eta, ksi: 0.5*(1 + eta)*0.5*(1 + ksi)*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_P)))
-#             integrantMM_real = lambda eta, ksi: 0.5*(1 - eta)*0.5*(1 - ksi)*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_M)))
-#             integrantMM_imag = lambda eta, ksi: 0.5*(1 - eta)*0.5*(1 - ksi)*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_M)))
-#             integrantPM_real = lambda eta, ksi: 0.5*(1 + eta)*0.5*(1 - ksi)*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_M)))
-#             integrantPM_imag = lambda eta, ksi: 0.5*(1 + eta)*0.5*(1 - ksi)*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_M)))
-#             integrantMP_real = lambda eta, ksi: 0.5*(1 - eta)*0.5*(1 + ksi)*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
-#             integrantMP_imag = lambda eta, ksi: 0.5*(1 - eta)*0.5*(1 + ksi)*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
-            
-#             # Do the same, but then for the second (right) double integral
-#             integrantPP_real_R = lambda eta, ksi: 0.5*0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_P)))
-#             integrantPP_imag_R = lambda eta, ksi: 0.5*0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_P)))
-#             integrantMM_real_R = lambda eta, ksi: -0.5*-0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_M)))
-#             integrantMM_imag_R = lambda eta, ksi: -0.5*-0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_M)))
-#             integrantPM_real_R = lambda eta, ksi: 0.5*-0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_M)))
-#             integrantPM_imag_R = lambda eta, ksi: 0.5*-0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_P, segn_M)))
-#             integrantMP_real_R = lambda eta, ksi: -0.5*0.5*(1/(2*pi))*np.real(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
-#             integrantMP_imag_R = lambda eta, ksi: -0.5*0.5*(1/(2*pi))*np.imag(kv(0, 1j*k0*dstrho(eta, ksi, segm_M, segn_P)))
-            
-#             # Remove (tri-)diagonal terms from the calculations, as these create
-#             # singularities, which Python is not able to numerically calculate.
-#             if(m == n):
-#                 int_PP = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dstm_P/2) + gamma_e))
-#                 int_MM = 1/(8*pi)*(7 - 4*np.log(2) - 4*(np.log(1j*k0*dstm_M/2) + gamma_e))
-#                 int_PM = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*((dstm_P + dstn_M)/2)/2) + gamma_e))
-#                 int_MP = 1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*((dstm_M + dstn_P)/2)/2) + gamma_e))
-                
-#                 Zmn_left[m,n]       += (dstm_P*dstn_P)*1j*omega*mu0*(int_PP)
-#                 Zmn_left[m-1,n-1]   += (dstm_M*dstn_M)*1j*omega*mu0*(int_MM)
-#                 Zmn_left[m,n-1]     += (dstm_P*dstn_M)*1j*omega*mu0*(int_PM)
-#                 Zmn_left[m-1,n]     += (dstm_M*dstn_P)*1j*omega*mu0*(int_MP)
-#             elif(m-1 == n or (n == 0 and m == M-1) or n-1 == m or (m == 0 and n == M-1)):
-#                 intPP_real, intPP_imag = 0, 0
-#                 intMM_real, intMM_imag = 0, 0
-#                 intPM_real, intPM_imag = 0, 0
-#                 intMP_real, intMP_imag = 0, 0
-#                 intPP_real_R, intPP_imag_R = 0, 0
-#                 intMM_real_R, intMM_imag_R = 0, 0
-#                 intPM_real_R, intPM_imag_R = 0, 0
-#                 intMP_real_R, intMP_imag_R = 0, 0
-#             else:
-#                 intPP_real = integrate.dblquad(integrantPP_real, -1, 1, -1, 1)[0]
-#                 intPP_imag = integrate.dblquad(integrantPP_imag, -1, 1, -1, 1)[0]
-#                 intMM_real = integrate.dblquad(integrantMM_real, -1, 1, -1, 1)[0]
-#                 intMM_imag = integrate.dblquad(integrantMM_imag, -1, 1, -1, 1)[0]
-#                 intPM_real = integrate.dblquad(integrantPM_real, -1, 1, -1, 1)[0]
-#                 intPM_imag = integrate.dblquad(integrantPM_imag, -1, 1, -1, 1)[0]
-#                 intMP_real = integrate.dblquad(integrantMP_real, -1, 1, -1, 1)[0]
-#                 intMP_imag = integrate.dblquad(integrantMP_imag, -1, 1, -1, 1)[0]
-#                 intPP_real_R = integrate.dblquad(integrantPP_real_R, -1, 1, -1, 1)[0]
-#                 intPP_imag_R = integrate.dblquad(integrantPP_imag_R, -1, 1, -1, 1)[0]
-#                 intMM_real_R = integrate.dblquad(integrantMM_real_R, -1, 1, -1, 1)[0]
-#                 intMM_imag_R = integrate.dblquad(integrantMM_imag_R, -1, 1, -1, 1)[0]
-#                 intPM_real_R = integrate.dblquad(integrantPM_real_R, -1, 1, -1, 1)[0]
-#                 intPM_imag_R = integrate.dblquad(integrantPM_imag_R, -1, 1, -1, 1)[0]
-#                 intMP_real_R = integrate.dblquad(integrantMP_real_R, -1, 1, -1, 1)[0]
-#                 intMP_imag_R = integrate.dblquad(integrantMP_imag_R, -1, 1, -1, 1)[0]
-
-#                 # Add the prefactors to the calculated integral based on the location
-#                 # of the element in the Z matrix for both the left and right integrals.
-#                 Zmn_left[m,n]       += dstm_P*dstn_P*1j*omega*mu0*(tauxm_P*tauxn_P + tauym_P*tauyn_P)*(intPP_real + 1j*intPP_imag)
-#                 Zmn_left[m-1,n-1]   += dstm_M*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_M + tauym_M*tauyn_M)*(intMM_real + 1j*intMM_imag)
-#                 Zmn_left[m,n-1]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_P*tauxn_M + tauym_P*tauyn_M)*(intPM_real + 1j*intPM_imag)
-#                 Zmn_left[m-1,n]     += dstm_P*dstn_M*1j*omega*mu0*(tauxm_M*tauxn_P + tauym_M*tauyn_P)*(intMP_real + 1j*intMP_imag)
-                    
-#                 Zmn_right[m,n]      += dstm_P*dstn_P*(tauxm_P**2 + tauym_P**2)/(1j*omega*epsilon0)*(intPP_real_R + 1j*intPP_imag_R)
-#                 Zmn_right[m-1,n-1]  += dstm_M*dstn_M*(tauxm_M**2 + tauym_M**2)/(1j*omega*epsilon0)*(intMM_real_R + 1j*intMM_imag_R)
-#                 Zmn_right[m,n-1]    += dstm_P*dstn_M*(tauxm_P**2 + tauym_P**2)/(1j*omega*epsilon0)*(intPM_real_R + 1j*intPM_imag_R)
-#                 Zmn_right[m-1,n]    += dstm_M*dstn_P*(tauxm_M**2 + tauym_M**2)/(1j*omega*epsilon0)*(intMP_real_R + 1j*intMP_imag_R)
-    
-#     # Add the integrals together, and return them as the final Z matrix
-#     Zmn = Zmn_left + Zmn_right
-    
-#     return Zmn, Zmn_left, Zmn_right #, Zmn_left_PP, Zmn_left_MM, Zmn_left_PM, Zmn_left_MP, Zmn_right_PP, Zmn_right_MM, Zmn_right_PM, Zmn_right_MP
-
-# def Zmn_adj_calculator(coordinates, wavelength):
-#     M = len(coordinates)-1
-#     k0 = 2*pi/wavelength
-#     mu0 = 4*pi*10**-7
-#     epsilon0 = 8.854187812813e-12
-#     c = 299792458
-#     omega = 2*pi*c/wavelength
-#     gamma_e = 0.577215664901532860606512090082402431042159335
-    
-#     degree = 100
-    
-#     Zmn_adj = np.zeros((M,1), dtype=np.complex128)
-    
-#     for m in range(M):
-#         print(m)
-#         segment_m = Coordinates_to_segment(coordinates, m)
-#         if m == 0:
-#             segment_n = Coordinates_to_segment(coordinates, -2)
-#         else:
-#             segment_n = Coordinates_to_segment(coordinates, m-1)
-        
-#         dst_m = segment_length(segment_m)/2
-#         dst_n = segment_length(segment_n)/2
-        
-#         tau_m = Tangent_vector_coefficients(segment_m)
-#         tau_n = Tangent_vector_coefficients(segment_n)
-        
-#         D = lambda eta, ksi, segm, segn: np.linalg.norm(np.subtract(rho(eta, segm), rho(ksi, segn)))
-#         green = lambda eta, ksi, segm, segn: 1/(2*pi)*kv(0, 1j*k0*D(eta, ksi, segm, segn))
-        
-#         # ADJECENT
-#         #x, w = np.polynomial.legendre.leggauss(degree)
-        
-#         #integrant_PP = RT_plus(x)*RT_plus(x)*green(x, x, segment_m, segment_n)
-#         #integrant_MM = RT_min(x)*RT_min(x)*green(x, x, segment_m, segment_n)
-        
-#         #integrant_PP_R = 0.25*green(x, x, segment_m, segment_n)
-#         #integrant_MM_R = 0.25*green(x, x, segment_m, segment_n)
-        
-#         #I_PP = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(np.sum(w*w*integrant_PP))
-#         #I_MM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(np.sum(w*w*integrant_MM))
-        
-#         #I_PP_R = dst_m*dst_n/(1j*omega*epsilon0)*(np.sum(w*w*integrant_PP_R))
-#         #I_MM_R = dst_m*dst_n/(1j*omega*epsilon0)*(np.sum(w*w*integrant_MM_R))
-        
-#         # SELF TERM
-#         #I_PM = (dst_m**2)*1j*omega*mu0*(1/(8*pi)*(5 - 4*np.log(2) - 4*(np.log(1j*k0*dst_m/2) + gamma_e)))
-#         #I_PM_R = (dst_m**2)*(1j*omega*epsilon0)*(-1/(8*pi)*(6 - 4*np.log(2) - 4*(np.log(1j*k0*dst_m/2) + gamma_e)))
-        
-#         # REGULAR
-#         integrant_PM_real = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
-#         integrant_PM_imag = lambda eta, ksi: RT_plus(eta)*RT_min(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
-#         integrant_MP_real = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
-#         integrant_MP_imag = lambda eta, ksi: RT_min(eta)*RT_plus(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
-#         integrant_PP_real = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
-#         integrant_PP_imag = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
-#         integrant_MM_real = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.real(green(eta, ksi, segment_m, segment_n))       
-#         integrant_MM_imag = lambda eta, ksi: RT_plus(eta)*RT_plus(ksi)*np.imag(green(eta, ksi, segment_m, segment_n))
-        
-#         integrant_PM_R_real = lambda eta, ksi: 0.5*-0.5*np.real(green(eta, ksi, segment_m, segment_n))       
-#         integrant_PM_R_imag = lambda eta, ksi: 0.5*-0.5*np.imag(green(eta, ksi, segment_m, segment_n))
-#         integrant_MP_R_real = lambda eta, ksi: -0.5*0.5*np.real(green(eta, ksi, segment_m, segment_n))
-#         integrant_MP_R_imag = lambda eta, ksi: -0.5*0.5*np.imag(green(eta, ksi, segment_m, segment_n)) 
-#         integrant_PP_R_real = lambda eta, ksi: 0.5*0.5*np.real(green(eta, ksi, segment_m, segment_n))       
-#         integrant_PP_R_imag = lambda eta, ksi: 0.5*0.5*np.imag(green(eta, ksi, segment_m, segment_n))
-#         integrant_MM_R_real = lambda eta, ksi: -0.5*-0.5*np.real(green(eta, ksi, segment_m, segment_n))       
-#         integrant_MM_R_imag = lambda eta, ksi: -0.5*-0.5*np.imag(green(eta, ksi, segment_m, segment_n))
-        
-#         I_PM_real = integrate.dblquad(integrant_PM_real, -1, 1, -1, 1)[0]
-#         I_PM_imag = integrate.dblquad(integrant_PM_imag, -1, 1, -1, 1)[0]
-#         I_MP_real = integrate.dblquad(integrant_MP_real, -1, 1, -1, 1)[0]
-#         I_MP_imag = integrate.dblquad(integrant_MP_imag, -1, 1, -1, 1)[0]
-#         I_PP_real = integrate.dblquad(integrant_PP_real, -1, 1, -1, 1)[0]
-#         I_PP_imag = integrate.dblquad(integrant_PP_imag, -1, 1, -1, 1)[0]
-#         I_MM_real = integrate.dblquad(integrant_MM_real, -1, 1, -1, 1)[0]
-#         I_MM_imag = integrate.dblquad(integrant_MM_imag, -1, 1, -1, 1)[0]
-        
-#         I_PM_R_real = integrate.dblquad(integrant_PM_R_real, -1, 1, -1, 1)[0]
-#         I_PM_R_imag = integrate.dblquad(integrant_PM_R_imag, -1, 1, -1, 1)[0]
-#         I_MP_R_real = integrate.dblquad(integrant_MP_R_real, -1, 1, -1, 1)[0]
-#         I_MP_R_imag = integrate.dblquad(integrant_MP_R_imag, -1, 1, -1, 1)[0]
-#         I_PP_R_real = integrate.dblquad(integrant_PP_R_real, -1, 1, -1, 1)[0]
-#         I_PP_R_imag = integrate.dblquad(integrant_PP_R_imag, -1, 1, -1, 1)[0]
-#         I_MM_R_real = integrate.dblquad(integrant_MM_R_real, -1, 1, -1, 1)[0]
-#         I_MM_R_imag = integrate.dblquad(integrant_MM_R_imag, -1, 1, -1, 1)[0]
-        
-#         I_PM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_PM_real + 1j*I_PM_imag)
-#         I_PM_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_PM_R_real + 1j*I_PM_R_imag)
-#         I_MP = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_MP_real + 1j*I_MP_imag)
-#         I_MP_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_MP_R_real + 1j*I_MP_R_imag)
-#         I_PP = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_PP_real + 1j*I_PP_imag)
-#         I_PP_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_PP_R_real + 1j*I_PP_R_imag)
-#         I_MM = dst_m*dst_n*1j*omega*mu0*(tau_m[0]*tau_n[0] + tau_m[1]*tau_n[1])*(I_MM_real + 1j*I_MM_imag)
-#         I_MM_R = dst_m*dst_n/(1j*omega*epsilon0)*(tau_m[0]*tau_m[0] + tau_m[1]*tau_m[1])*(I_MM_R_real + 1j*I_MM_R_imag)
-        
-#         # ADD THEM UP
-#         Zmn_adj[m] = I_PP + I_MM + I_PM + I_MP + I_PP_R + I_MM_R + I_PM_R + I_MP_R 
-    
-#     return Zmn_adj
 
 def Zmn_adj_calculator(coordinates, wavelength):
     # This function divides the segments into 3 distinct cases: one point, full segment, and no overlap.
@@ -879,86 +609,7 @@ def Zmn_diag_calculator(coordinates, wavelength):
         
         Zdiag[m] = f_g[m] + g[m]
     
-    return Zdiag#, g, f_g
-    
-
-# def Zmn_diag_calculator_appendix(coordinates, wavelength):
-#     # Calculate the diagonal of the Z matrix us the self term approximation
-#     M = len(coordinates)-1
-#     mu0 = 4 * pi * 10**-7
-#     epsilon0 = 8.854187812813e-12
-#     c = 299792458
-#     omega = 2*pi*c/wavelength
-    
-#     # Predefine the array to be zero
-#     Zdiag = np.zeros((M,1), dtype=np.complex128)
-    
-#     for m in np.arange(M):
-#         segm = Coordinates_to_segment(coordinates, m)
-        
-#         # Calculate the self-term, based on Appendix A3. This returns an array
-#         # of two variables (per m), with Is[0] -> Is[1] and Is[1] -> Is[eta*ksi] 
-#         Is = Self_term_integral(coordinates, wavelength, m)
-        
-#         # Calculate the tangential unit vector components
-#         tauxm, tauym = Tangent_vector_coefficients(segm)
-        
-#         # Add the prefactors to the calculated self integral, where we do not
-#         # use the distance, as that is taken into account in the self-term itself.
-#         # Only uses the left integral, as the right intgeral reduces to 0 (2Is[0]-2Is[0]=0)
-#         Zdiag[m] = 1j*omega*mu0/(2*pi)*(tauxm*tauxm + tauym*tauym)*(1/4)*(4*Is[0])
-        
-#     return Zdiag
-
-# def Self_term_integral(coordinates, wavelength, m):
-#     # Define the different elements of the self term integral Is (Is[eta*ksi] and Is[1])
-#     # using Appendix A3 as a reference for the equations
-#     k0 = 2*pi/wavelength
-#     if m == -1:
-#         segm = Coordinates_to_segment(coordinates, -2);
-#     else:
-#         segm = Coordinates_to_segment(coordinates, m)
-        
-#     d = segment_length(segm)/2
-#     p = d*1j*k0
-    
-#     # Order of calculations (upper bound for the summations), the paper defines
-#     # an order of 15 to be sufficient for its use case
-#     order = 15
-
-#     # Calculate the self-term integral for Is[eta*ksi]
-#     Is_etaksi = 0;
-#     for k in range(order+1):
-#         term = (2 - k * (2 * (1 + k) * (1 + 2 * k) * (2 + k) * (Harmonic_number(k) - np.log(p)) + k * (7 + 4 * k)))
-#         term /= (pow((1 + k), 2) * pow((1 + 2 * k), 2) * pow((2 + k), 2) * pow(factorial(k), 2))
-#         Is_etaksi += term
-#     Is_etaksi *= 2*pow(d, 2)
-    
-#     # Calculate the self-term integral for Is[1]
-#     Is1 = 0
-#     for k in range(order+1):
-#         term = (3 + 4 * k + 2 * (1 + k) * (1 + 2 * k) * (Harmonic_number(k) - np.log(p)))
-#         term /= (pow((1 + k), 2) * pow((1 + 2 * k), 2) * pow(factorial(k), 2))
-#         Is1 += term
-#     Is1 *= 2*pow(d, 2)
-    
-#     return np.array([Is1, Is_etaksi])
-
-# def Harmonic_number(k):
-#     # Scipy inbuilt function to calculate the harmonic number phi(k).
-#     # Start from k+1, as psi(0) = -inf, which we want to ignore.
-#     return psi(k + 1)
-
-# def EFIE_TM(coordinates,wavelength,angle):
-#     # The main algorithm
-#     Ein_x, Ein_y = DiscritizeEin(coordinates,wavelength,angle)
-#     Zm, Zm_ref = Zmn_calculator(coordinates,wavelength)
-#     # Solve for both the x and y incident field
-#     Jz_x = np.dot(np.linalg.inv(Zm),Ein_x)
-#     Jz_y = np.dot(np.linalg.inv(Zm), Ein_y)
-#     #Jz = np.dot(np.linalg.inv(Zm), Ein_x + Ein_y)
-#     # Return all variables of interest as a tuple
-#     return Jz_x, Jz_y, Ein_x, Ein_y, Zm, Zm_ref
+    return Zdiag
 
 def EFIE_TM(coordinates,wavelength,angle):
     # The main algorithm
@@ -968,19 +619,6 @@ def EFIE_TM(coordinates,wavelength,angle):
     Jz = np.dot(np.linalg.inv(Zm), Ein_x + Ein_y)
     # Return all variables of interest as a tuple
     return Jz, Ein_x, Ein_y, Zm, Zm_ref
-
-# def Etot(Jz_x, Jz_y, R, coordinates, wavelength, angle):
-#     # Calculate the total field on given coordinates
-#     M = len(R)
-#     Etot_x = np.zeros(M, dtype=np.complex128)
-#     Etot_y = np.zeros(M, dtype=np.complex128)
-#     for i in np.arange(M):
-#             r = R[i]
-#             Esc_x, Esc_y = Escatter(Jz_x, Jz_y, r, coordinates, wavelength)
-#             Ein_x, Ein_y = Efield_in(r, wavelength, angle)
-#             Etot_x[i] = Ein_x + Esc_x
-#             Etot_y[i] = Ein_y + Esc_y
-#     return Etot_x, Etot_y
 
 def Etot(Jz, x, y, coordinates, wavelength, angle):
     # Calculate the total field on given coordinates
@@ -995,57 +633,6 @@ def Etot(Jz, x, y, coordinates, wavelength, angle):
             Etot_x[i,j], Etot_y[i,j] = Esc_x[i,j] + Ein_x[i,j], Esc_y[i,j] + Ein_y[i,j]
         print(i)
     return Ein_x, Ein_y, Esc_x, Esc_y, Etot_x, Etot_y
-
-# def Escatter(Jz_x,Jz_y,rho,coordinates,wavelength):
-#     # Calculate the Electric field scattered from the object on given coordinates
-#     mu0 = 4*pi*10**-7
-#     c = 299792458
-#     omega = 2*pi*c/wavelength
-    
-#     # G can be complex so allocate complex matrix
-#     G_P = np.zeros(len(Jz_x), dtype=np.complex128)
-#     G_M = np.zeros(len(Jz_x), dtype=np.complex128)
-#     GRight_P = np.zeros(len(Jz_x), dtype=np.complex128)
-#     GRight_M = np.zeros(len(Jz_x), dtype=np.complex128)
-#     Esc_x, Esc_y = np.zeros(len(Jz_x), dtype=np.complex128), np.zeros(len(Jz_x), dtype=np.complex128)
-#     # Note length Jz = length coordinates-1, so no -1 nessesary here
-#     for n in np.arange(len(Jz_x)):
-#         segment = Coordinates_to_segment(coordinates,n)
-        
-#         # Calculate the real and imaginary part seperately
-#         GReal_P = lambda eta: (1/2)*(1 + eta)*np.real(greenEsc(rho,eta,segment,wavelength))
-#         GImag_P = lambda eta: (1/2)*(1 + eta)*np.imag(greenEsc(rho,eta,segment,wavelength))
-#         GReal_M = lambda eta: (1/2)*(1 - eta)*np.real(greenEsc(rho,eta,segment,wavelength))
-#         GImag_M = lambda eta: (1/2)*(1 - eta)*np.imag(greenEsc(rho,eta,segment,wavelength))
-        
-#         GRealRight_P = lambda eta: (1/2)*np.real(greenEsc(rho,eta,segment,wavelength))
-#         GImagRight_P = lambda eta: (1/2)*np.imag(greenEsc(rho,eta,segment,wavelength))
-#         GRealRight_M = lambda eta: (-1/2)*np.real(greenEsc(rho,eta,segment,wavelength))
-#         GImagRight_M = lambda eta: (-1/2)*np.imag(greenEsc(rho,eta,segment,wavelength))
-
-#         IntReal_P = integrate.quad(GReal_P, -1, 1)[0]
-#         IntImag_P = integrate.quad(GImag_P, -1, 1)[0]
-#         IntReal_M = integrate.quad(GReal_M, -1, 1)[0]
-#         IntImag_M = integrate.quad(GImag_M, -1, 1)[0]
-        
-#         IntRealRight_P = integrate.quad(GRealRight_P, -1, 1)[0]
-#         IntImagRight_P = integrate.quad(GImagRight_P, -1, 1)[0]
-#         IntRealRight_M = integrate.quad(GRealRight_M, -1, 1)[0]
-#         IntImagRight_M = integrate.quad(GImagRight_M, -1, 1)[0]
-        
-#         # Correct for the basis function used
-#         dst = segment_length(segment)
-#         G_P[n] = dst*(IntReal_P + 1j*IntImag_P)
-#         G_M[n] = dst*(IntReal_M + 1j*IntImag_M)
-        
-#         GRight_P[n] = dst*(IntRealRight_P + 1j*IntImagRight_P)
-#         GRight_M[n] = dst*(IntRealRight_M + 1j*IntImagRight_M)
-
-#     # Compute the scattered field for both the x and y components
-#     # Use np.roll to convert Jn+ into Jn- (Height associated with the negative triangle function)
-#     Esc_x = 1j*omega*mu0*(np.dot(G_P, np.roll(Jz_x,1)) + np.dot(G_M,Jz_x))
-#     Esc_y = 1j*omega*mu0*(np.dot(G_P, np.roll(Jz_y,1)) + np.dot(G_M,Jz_y))
-#     return Esc_x, Esc_y
 
 def Escatter(Jz,r,coordinates,wavelength):
     # Calculate the Electric field scattered from the object on given coordinates
@@ -1072,16 +659,16 @@ def Escatter(Jz,r,coordinates,wavelength):
             segment_n_M = Coordinates_to_segment(coordinates, -2)
         else:
             segment_n_M = Coordinates_to_segment(coordinates, n-1)
-        
-        tau_n = Tangent_vector_coefficients(segment_n)
-        tau_n_M = Tangent_vector_coefficients(segment_n_M)
 
-        
         # Calculate the real and imaginary part seperately
-        GReal_P = lambda ksi: (1/2)*(1 + ksi)*np.real(greenEsc(r,ksi,segment_n,wavelength))
-        GImag_P = lambda ksi: (1/2)*(1 + ksi)*np.imag(greenEsc(r,ksi,segment_n,wavelength))
-        GReal_M = lambda ksi: (1/2)*(1 - ksi)*np.real(greenEsc(r,ksi,segment_n_M,wavelength))
-        GImag_M = lambda ksi: (1/2)*(1 - ksi)*np.imag(greenEsc(r,ksi,segment_n_M,wavelength))
+        GReal_P_x = lambda ksi: (1/2)*(1 + ksi)*np.real(greenEsc(r,ksi,segment_n,wavelength))*(rho(ksi,segment_n)[0])/np.linalg.norm(rho(ksi,segment_n))
+        GImag_P_x = lambda ksi: (1/2)*(1 + ksi)*np.imag(greenEsc(r,ksi,segment_n,wavelength))*(rho(ksi,segment_n)[0])/np.linalg.norm(rho(ksi,segment_n))
+        GReal_M_x = lambda ksi: (1/2)*(1 - ksi)*np.real(greenEsc(r,ksi,segment_n_M,wavelength))*(rho(ksi,segment_n_M)[0])/np.linalg.norm(rho(ksi,segment_n_M))
+        GImag_M_x = lambda ksi: (1/2)*(1 - ksi)*np.imag(greenEsc(r,ksi,segment_n_M,wavelength))*(rho(ksi,segment_n_M)[0])/np.linalg.norm(rho(ksi,segment_n_M))
+        GReal_P_y = lambda ksi: (1/2)*(1 + ksi)*np.real(greenEsc(r,ksi,segment_n,wavelength))*(rho(ksi,segment_n)[1])/np.linalg.norm(rho(ksi,segment_n))
+        GImag_P_y = lambda ksi: (1/2)*(1 + ksi)*np.imag(greenEsc(r,ksi,segment_n,wavelength))*(rho(ksi,segment_n)[1])/np.linalg.norm(rho(ksi,segment_n))
+        GReal_M_y = lambda ksi: (1/2)*(1 - ksi)*np.real(greenEsc(r,ksi,segment_n_M,wavelength))*(rho(ksi,segment_n_M)[1])/np.linalg.norm(rho(ksi,segment_n_M))
+        GImag_M_y = lambda ksi: (1/2)*(1 - ksi)*np.imag(greenEsc(r,ksi,segment_n_M,wavelength))*(rho(ksi,segment_n)[1])/np.linalg.norm(rho(ksi,segment_n_M))
         
         GRealRight_P_x = lambda ksi: (1/2)*np.real(greenEsc_R(r,ksi,segment_n,wavelength))*(np.subtract(r,rho(ksi,segment_n))[0])/np.linalg.norm(np.subtract(r, rho(ksi, segment_n)))
         GImagRight_P_x = lambda ksi: (1/2)*np.imag(greenEsc_R(r,ksi,segment_n,wavelength))*(np.subtract(r,rho(ksi,segment_n))[0])/np.linalg.norm(np.subtract(r, rho(ksi, segment_n)))
@@ -1092,10 +679,14 @@ def Escatter(Jz,r,coordinates,wavelength):
         GRealRight_M_y = lambda ksi: (-1/2)*np.real(greenEsc_R(r,ksi,segment_n_M,wavelength))*(np.subtract(r,rho(ksi,segment_n_M))[1])/np.linalg.norm(np.subtract(r, rho(ksi, segment_n_M)))
         GImagRight_M_y = lambda ksi: (-1/2)*np.imag(greenEsc_R(r,ksi,segment_n_M,wavelength))*(np.subtract(r,rho(ksi,segment_n_M))[1])/np.linalg.norm(np.subtract(r, rho(ksi, segment_n_M)))
 
-        IntReal_P = integrate.quad(GReal_P, -1, 1)[0]
-        IntImag_P = integrate.quad(GImag_P, -1, 1)[0]
-        IntReal_M = integrate.quad(GReal_M, -1, 1)[0]
-        IntImag_M = integrate.quad(GImag_M, -1, 1)[0]
+        IntReal_P_x = integrate.quad(GReal_P_x, -1, 1)[0]
+        IntImag_P_x = integrate.quad(GImag_P_x, -1, 1)[0]
+        IntReal_M_x = integrate.quad(GReal_M_x, -1, 1)[0]
+        IntImag_M_x = integrate.quad(GImag_M_x, -1, 1)[0]
+        IntReal_P_y = integrate.quad(GReal_P_y, -1, 1)[0]
+        IntImag_P_y = integrate.quad(GImag_P_y, -1, 1)[0]
+        IntReal_M_y = integrate.quad(GReal_M_y, -1, 1)[0]
+        IntImag_M_y = integrate.quad(GImag_M_y, -1, 1)[0]
         
         IntRealRight_P_x = integrate.quad(GRealRight_P_x, -1, 1)[0]
         IntImagRight_P_x = integrate.quad(GImagRight_P_x, -1, 1)[0]
@@ -1105,16 +696,15 @@ def Escatter(Jz,r,coordinates,wavelength):
         IntImagRight_P_y = integrate.quad(GImagRight_P_y, -1, 1)[0]
         IntRealRight_M_y = integrate.quad(GRealRight_M_y, -1, 1)[0]
         IntImagRight_M_y = integrate.quad(GImagRight_M_y, -1, 1)[0]
-        
-        
+          
         # Correct for the basis function used
         dst_n = segment_length(segment_n)/2
         dst_n_M = segment_length(segment_n_M)/2
         
-        G_P_x[n] = dst_n*(IntReal_P + 1j*IntImag_P)*tau_n[0]
-        G_M_x[n] = dst_n_M*(IntReal_M + 1j*IntImag_M)*tau_n_M[0]
-        G_P_y[n] = dst_n*(IntReal_P + 1j*IntImag_P)*tau_n[1]
-        G_M_y[n] = dst_n_M*(IntReal_M + 1j*IntImag_M)*tau_n_M[1]
+        G_P_x[n] = dst_n*(IntReal_P_x + 1j*IntImag_P_x)
+        G_M_x[n] = dst_n_M*(IntReal_M_x + 1j*IntImag_M_x)
+        G_P_y[n] = dst_n*(IntReal_P_y + 1j*IntImag_P_y)
+        G_M_y[n] = dst_n_M*(IntReal_M_y + 1j*IntImag_M_y)
         
         GRight_P_x[n] = dst_n*(IntRealRight_P_x + 1j*IntImagRight_P_x)
         GRight_M_x[n] = dst_n_M*(IntRealRight_M_x + 1j*IntImagRight_M_x)

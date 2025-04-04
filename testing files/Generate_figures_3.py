@@ -1,7 +1,7 @@
 import numpy as np
 #import scipy as sp
 import matplotlib.pyplot as plt
-import EFIE_TM_LIBR_2 as tm
+import EFIE_TM_LIBR_3 as tm
 import TMcil
 import time
 #from csv import writer
@@ -117,8 +117,8 @@ time_main = end-start
 ##-----------------Generate grid to plot E field------------
 start = time.time()
 N = 80
-xmin = -4
-xmax = 4
+xmin = -5
+xmax = 5
 ymin = -1
 ymax = 7
 x, y = np.linspace(xmin,xmax,N), np.linspace(ymin,ymax,N)
@@ -136,6 +136,11 @@ time_grid = end-start
 
 ##---------------generate the analytical field------------------------------
 gridx,gridy = np.meshgrid(x,y)
+
+# Set the inside of the cylinder (with radius 1 and centre (0,0) to be equal to 0)
+# distance = np.sqrt((gridx - 0)**2 + (gridy - 0)**2)
+# Etot_x[distance < 1] = 0
+# Etot_y[distance < 1] = 0
 
 simparams = {
     'frequency' : f,
@@ -203,14 +208,6 @@ plt.show()
 #plt.scatter(Data2[:,0],Data2[:,1])
 #plt.savefig("Etot.png")
 
-# plt.figure("Etot_ref")
-# plt.imshow(abs(Hz),origin='lower',interpolation='none',extent=[xmin,xmax,ymin,ymax])
-# plt.title("$|E_{ref}|$")
-# plt.xlabel("x")
-# plt.ylabel("y")
-# plt.colorbar()
-#plt.savefig("Eref.png")
-
 plt.figure("Ex_ref")
 plt.imshow(abs(Ex),origin='lower',interpolation='none',extent=[xmin,xmax,ymin,ymax])
 plt.title("$|E_{x}|$")
@@ -225,10 +222,17 @@ plt.xlabel("x")
 plt.ylabel("y")
 plt.colorbar()
 
-#plt.figure("delta")
-#plt.imshow(abs(Eref-Etot),origin='lower',interpolation='none',extent=[xmin,xmax,ymin,ymax])
-#plt.title("$|\Delta|$")
-#plt.xlabel("x")
-#plt.ylabel("y")
-#plt.colorbar()
+plt.figure("delta_y")
+plt.imshow(abs(Ey-Etot_y),origin='lower',interpolation='none',extent=[xmin,xmax,ymin,ymax])
+plt.title("$|\Delta_y|$")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.colorbar()
 #plt.savefig("DeltaE.png")
+
+plt.figure("delta_x")
+plt.imshow(abs(Ex-Etot_x),origin='lower',interpolation='none',extent=[xmin,xmax,ymin,ymax])
+plt.title("$|\Delta_x|$")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.colorbar()
